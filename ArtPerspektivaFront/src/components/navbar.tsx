@@ -45,12 +45,12 @@ export const Navbar = () => (
       className="w-full grid items-center gap-2 grid-cols-[1fr_auto_auto]"
     >
       {/* Поиск – только ≥ lg */}
-      <div className="hidden lg:block w-full">
+      <div className="hidden md:block w-full">
         <SearchInput />
       </div>
 
       {/* Бургер – виден < lg */}
-      <NavbarMenuToggle className="lg:hidden" />
+      <NavbarMenuToggle className="md:hidden" />
 
       {/* Theme-switch – ВСЕГДА последний, поэтому крайний справа */}
       <ThemeSwitch />

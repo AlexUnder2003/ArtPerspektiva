@@ -13,7 +13,7 @@ export default function DefaultLayout({
 }) {
   return (
     <div className="flex h-screen w-full">
-      <aside className="hidden lg:block w-16 h-full border-r border-default-100 bg-background">
+      <aside className="hidden md:block w-16 h-full border-r border-default-100 bg-background">
         <ScrollShadow className="h-full">
           <Sidebar defaultSelectedKey="home" items={items} isCompact hideEndContent className="pt-3"/>
         </ScrollShadow>
