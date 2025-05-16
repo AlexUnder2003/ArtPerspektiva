@@ -1,6 +1,3 @@
-// ─────────────────────────────────────────────
-// src/components/navbar.tsx
-// ─────────────────────────────────────────────
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -16,6 +13,7 @@ import { Kbd }    from "@heroui/kbd";
 
 import { ThemeSwitch }     from "@/components/theme-switch";
 import { SearchIcon } from "@/components/icons";
+
 
 import { siteConfig } from "@/config/site";
 
@@ -41,19 +39,28 @@ const SearchInput = () => (
   />
 );
 
+/* ───────────────── Navbar ───────────────── */
 export const Navbar = () => (
   <HeroUINavbar position="sticky" maxWidth="fluid" className="px-4">
     <NavbarContent className="w-full items-center gap-4">
+      {/* ПОИСК (grow) */}
       <NavbarItem className="hidden lg:flex grow">
         <SearchInput />
       </NavbarItem>
 
+      {/* БЛОК СПРАВА */}
       <NavbarItem className="flex-none gap-2">
-          <ThemeSwitch />
+        
+
+        {/* переключатель темы */}
+        <ThemeSwitch />
+
+        {/* бургер-меню */}
         <NavbarMenuToggle className="lg:hidden" />
       </NavbarItem>
     </NavbarContent>
 
+    {/* Мобильное меню */}
     <NavbarMenu>
       <div className="px-4">
         <SearchInput />
