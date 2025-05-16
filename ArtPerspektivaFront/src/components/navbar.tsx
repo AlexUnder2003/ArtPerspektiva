@@ -1,24 +1,24 @@
 // ─────────────────────────────────────────────
-// src/components/navbar.tsx
+// src/components/navbar.tsx  – Grid-версия
+// • Поиск виден ≥ lg (≥ 1024 px)
+// • ThemeSwitch ВСЕГДА крайний справа
 // ─────────────────────────────────────────────
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
+  NavbarMenuToggle,
 } from "@heroui/navbar";
+import { Input } from "@heroui/input";
+import { Link }  from "@heroui/link";
+import { Kbd }   from "@heroui/kbd";
 
-import { Input }  from "@heroui/input";
-import { Link }   from "@heroui/link";
-import { Kbd }    from "@heroui/kbd";
+import { ThemeSwitch } from "@/components/theme-switch";
+import { SearchIcon }  from "@/components/icons";
+import { siteConfig }  from "@/config/site";
 
-import { ThemeSwitch }     from "@/components/theme-switch";
-import { SearchIcon } from "@/components/icons";
-
-import { siteConfig } from "@/config/site";
-
+/* ─────────────── Поиск ─────────────── */
 const SearchInput = () => (
   <Input
     type="search"
@@ -32,28 +32,31 @@ const SearchInput = () => (
     startContent={
       <SearchIcon className="text-default-400 pointer-events-none flex-shrink-0" />
     }
-    endContent={
-      <Kbd keys={["command"]} className="hidden lg:inline-block">
-        K
-      </Kbd>
-    }
+    endContent={<Kbd keys={["command"]} className="hidden lg:inline-block">K</Kbd>}
     aria-label="Search"
   />
 );
 
+/* ─────────────────── Navbar ─────────────────── */
 export const Navbar = () => (
   <HeroUINavbar position="sticky" maxWidth="fluid" className="px-4">
-    <NavbarContent className="w-full items-center gap-4">
-      <NavbarItem className="hidden lg:flex grow">
+    {/* Grid: 1fr (поиск) | auto (бургер) | auto (ThemeSwitch) */}
+    <NavbarContent
+      className="w-full grid items-center gap-2 grid-cols-[1fr_auto_auto]"
+    >
+      {/* Поиск – только ≥ lg */}
+      <div className="hidden lg:block w-full">
         <SearchInput />
-      </NavbarItem>
+      </div>
 
-      <NavbarItem className="flex-none gap-2">
-          <ThemeSwitch />
-        <NavbarMenuToggle className="lg:hidden" />
-      </NavbarItem>
+      {/* Бургер – виден < lg */}
+      <NavbarMenuToggle className="lg:hidden" />
+
+      {/* Theme-switch – ВСЕГДА последний, поэтому крайний справа */}
+      <ThemeSwitch />
     </NavbarContent>
 
+    {/* Мобильное меню */}
     <NavbarMenu>
       <div className="px-4">
         <SearchInput />
@@ -82,5 +85,4 @@ export const Navbar = () => (
   </HeroUINavbar>
 );
 
-/* экспорт по умолчанию тоже доступен */
 export default Navbar;
