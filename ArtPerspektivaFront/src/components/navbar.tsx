@@ -7,7 +7,6 @@ import {
 } from "@heroui/navbar";
 import { Input } from "@heroui/input";
 import { Link }  from "@heroui/link";
-import { Kbd }   from "@heroui/kbd";
 
 import { ThemeSwitch } from "@/components/theme-switch";
 import { SearchIcon }  from "@/components/icons";
