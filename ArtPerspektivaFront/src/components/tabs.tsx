@@ -41,7 +41,7 @@ export default function CategoryTabs(
       aria-label="Категории работ"
       variant="underlined"
       defaultSelectedKey="all"
-      className={twMerge('ml-6', className)}
+      className={twMerge('ml-6 font-sans', className)}
       classNames={{ ...defaultSlots, ...classNames }}
       {...rest}
     >

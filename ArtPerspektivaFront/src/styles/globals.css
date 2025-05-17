@@ -1,3 +1,15 @@
 @tailwind base;
+@layer base {
+  @font-face {
+    font-family: "Golos Text";
+    /* порядок источников важен: сначала woff2 */
+    src:
+      url("../../fonts/golos-text_vf.woff2") format("woff2-variations"),
+      url("../../fonts/golos-text_vf.woff")  format("woff-variations");
+    font-weight: 100 900;   /* весь диапазон */
+    font-style:  normal;
+    font-display: swap;
+  }
+}
 @tailwind components;
 @tailwind utilities;
