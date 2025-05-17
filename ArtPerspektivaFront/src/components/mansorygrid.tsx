@@ -1,33 +1,43 @@
 // MasonryGrid.tsx
-import { Card, CardBody } from "@heroui/react";   // HeroUI v2+
+import { Card, CardBody } from "@heroui/react";
 import { FC } from "react";
 
 interface MasonryGridProps {
-  cards?: number;          // сколько «пустых» карточек показать
+  cards?: number;
 }
 
-export const MasonryGrid: FC<MasonryGridProps> = ({ cards = 20 }) => (
-  <section
-    className="
-        grid grid-cols-1                /* мобильный */
-        sm:grid-cols-2 md:grid-cols-4   /* ≥ 640 / 768 */
-        lg:grid-cols-5 xl:grid-cols-8   /* ≥ 1024 / 1280 */
-        gap-4 p-2
-        mx-auto max-w-none              /* без ограничения ширины */
-    "
-    >
-    {Array.from({ length: cards }).map((_, i) => (
-        <Card
-        key={i}
-        isHoverable
-        shadow="md"
-        className="w-full"
-        >
-        <CardBody className="h-52 flex items-center justify-center text-gray-400">
-            Card #{i + 1}
-        </CardBody>
-        </Card>
-    ))}
-    </section>
+export const MasonryGrid: FC<MasonryGridProps> = ({ cards = 20 }) => {
+  /** Набор возможных высот (px). Можно расширять. */
+  const heights = [160, 200, 260, 320, 380, 460];
 
-);
+  return (
+    <section
+      className="
+        /* Masonry-колонки */
+        columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5
+        gap-4 space-y-4 px-2
+        mx-auto max-w-none
+      "
+    >
+      {Array.from({ length: cards }).map((_, i) => {
+        const h = heights[Math.floor(Math.random() * heights.length)];
+        return (
+          <Card
+            key={i}
+            isHoverable
+            shadow="md"
+            className="break-inside-avoid"
+          >
+            {/* inline-style = любая высота без необходимости добавлять utility-класс */}
+            <CardBody
+              style={{ height: h }}
+              className="flex items-center justify-center"
+            >
+              Card #{i + 1} <br /> {h}px
+            </CardBody>
+          </Card>
+        );
+      })}
+    </section>
+  );
+};
