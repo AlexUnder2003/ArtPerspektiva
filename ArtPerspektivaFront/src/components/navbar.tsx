@@ -1,8 +1,3 @@
-// ─────────────────────────────────────────────
-// src/components/navbar.tsx  – Grid-версия
-// • Поиск виден ≥ lg (≥ 1024 px)
-// • ThemeSwitch ВСЕГДА крайний справа
-// ─────────────────────────────────────────────
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -39,24 +34,19 @@ const SearchInput = () => (
 
 /* ─────────────────── Navbar ─────────────────── */
 export const Navbar = () => (
-  <HeroUINavbar position="sticky" maxWidth="fluid" className="px-4">
-    {/* Grid: 1fr (поиск) | auto (бургер) | auto (ThemeSwitch) */}
+  <HeroUINavbar position="sticky" maxWidth="full" className="px-4">
     <NavbarContent
       className="w-full grid items-center gap-2 grid-cols-[1fr_auto_auto]"
     >
-      {/* Поиск – только ≥ lg */}
       <div className="hidden md:block w-full">
         <SearchInput />
       </div>
 
-      {/* Бургер – виден < lg */}
       <NavbarMenuToggle className="md:hidden" />
 
-      {/* Theme-switch – ВСЕГДА последний, поэтому крайний справа */}
       <ThemeSwitch />
     </NavbarContent>
 
-    {/* Мобильное меню */}
     <NavbarMenu>
       <div className="px-4">
         <SearchInput />
