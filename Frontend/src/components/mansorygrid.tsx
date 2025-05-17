@@ -65,10 +65,7 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ testPhotos }) => {
         <div key={item.id} className="break-inside-avoid w-full">
           <Card isHoverable isPressable shadow="md" className="overflow-hidden group block m-0 w-full">
             <div className="relative w-full">
-              {/* сохраняем пропорции */}
               <img src={item.src} alt={item.title} className="w-full h-auto transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-
-              {/* overlay */}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3">
                 <div className="flex-1 flex items-center justify-center pointer-events-none">
                   <Icon icon="mdi:eye-outline" width="36" className="text-white/70" />
