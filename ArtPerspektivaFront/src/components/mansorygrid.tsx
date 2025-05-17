@@ -15,7 +15,7 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ cards = 20 }) => {
       className="
         /* Masonry-колонки */
         columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5
-        gap-4 space-y-4 px-2
+        gap-4 space-y-4 px-2 pt-2
         mx-auto max-w-none
       "
     >
@@ -25,6 +25,7 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ cards = 20 }) => {
           <Card
             key={i}
             isHoverable
+            radius="none"   
             shadow="md"
             className="break-inside-avoid"
           >
