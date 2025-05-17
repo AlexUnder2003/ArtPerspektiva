@@ -63,11 +63,9 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ pageSize = 20 }) => {
       const height = 160 + Math.floor(Math.random() * 300); // 160–460 px
       const year = 1995 + (id % 30);
 
-      // pick 1‑3 random tags
       const shuffledTags = TAG_POOL.sort(() => 0.5 - Math.random());
       const tags = shuffledTags.slice(0, Math.floor(Math.random() * 3) + 1);
 
-      // pick random title
       const title = TITLE_POOL[Math.floor(Math.random() * TITLE_POOL.length)];
 
       return {
@@ -86,13 +84,10 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ pageSize = 20 }) => {
     fetching.current = false;
   }, [page, pageSize]);
 
-  /* --------------------------- first page --------------------------- */
   useEffect(() => {
     fetchPage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ---------------------- infinite-scroll sentinel -------------------- */
   useEffect(() => {
     if (!loadingRef.current) return;
     const observer = new IntersectionObserver(
@@ -105,13 +100,11 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ pageSize = 20 }) => {
     return () => observer.disconnect();
   }, [fetchPage]);
 
-  /* ------------------------------- UI -------------------------------- */
   return (
     <>
       <section className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 px-2 mx-auto max-w-none">
         {items.map((item) => (
           <div key={item.id} className="break-inside-avoid w-full">
-            {/* Card */}
             <Card
               isHoverable
               isPressable
@@ -125,9 +118,7 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ pageSize = 20 }) => {
                   style={{ height: item.height }}
                   className="w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                {/* overlay: icon + tags */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3">
-                  {/* center eye/info icon */}
                   <div className="flex-1 flex items-center justify-center pointer-events-none">
                     <Icon icon="mdi:eye-outline" width="36" className="text-white/70" />
                   </div>
@@ -145,25 +136,22 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ pageSize = 20 }) => {
                 </div>
               </div>
             </Card>
-            {/* caption */}
             <div className="flex items-start justify-between pt-2 px-1">
-              {/* left: title + author/year */}
               <div className="flex flex-col">
-                <span className="text-base font-medium text-gray-200 leading-tight">
+                <span className="text-base font-medium leading-tight">
                   {item.title}
                 </span>
-                <span className="text-sm text-gray-400">
+                <span className="text-sm">
                   {item.author} · {item.year}
                 </span>
               </div>
-              {/* right: add to favourites */}
+
               <button
                 type="button"
                 className="p-1 rounded-full hover:bg-gray-700/20 transition self-start"
                 aria-label="Add to favourites"
                 onClick={(e) => {
                   e.stopPropagation();
-                  // TODO: handle favourites
                 }}
               >
                 <Icon icon="mdi:plus" width="22" className="text-gray-400" />
@@ -173,7 +161,6 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ pageSize = 20 }) => {
         ))}
       </section>
 
-      {/* sentinel */}
       <div ref={loadingRef} className="h-10" />
     </>
   );
