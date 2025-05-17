@@ -27,7 +27,6 @@ const SearchInput = () => (
     startContent={
       <SearchIcon className="text-default-400 pointer-events-none font-sans flex-shrink-0" />
     }
-    endContent={<Kbd keys={["command"]} className="hidden lg:inline-block">K</Kbd>}
     aria-label="Search"
   />
 );
