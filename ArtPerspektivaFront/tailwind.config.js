@@ -1,4 +1,5 @@
 import {heroui} from "@heroui/theme"
+import defaultTheme   from 'tailwindcss/defaultTheme.js';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -16,6 +17,16 @@ export default {
       },
     },
   },
-  darkMode: "class",
-  plugins: [heroui()],
+
+  // 2) чтобы HeroUI-компоненты использовали тот же шрифт
+  plugins: [
+    heroui({
+      layout: {
+        fontFamily: {
+          sans: '"Golos Text", ui-sans-serif, system-ui',
+        },
+      },
+
+    }),
+  ],
 }

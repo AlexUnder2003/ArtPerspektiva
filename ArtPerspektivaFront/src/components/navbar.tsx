@@ -19,13 +19,13 @@ const SearchInput = () => (
     type="search"
     placeholder="Search…"
     fullWidth
-    className="w-full max-w-none"
+    className="w-full max-w-none font-sans"
     classNames={{
       inputWrapper: "w-full bg-default-100",
       input:        "w-full text-sm",
     }}
     startContent={
-      <SearchIcon className="text-default-400 pointer-events-none flex-shrink-0" />
+      <SearchIcon className="text-default-400 pointer-events-none font-sans flex-shrink-0" />
     }
     endContent={<Kbd keys={["command"]} className="hidden lg:inline-block">K</Kbd>}
     aria-label="Search"
@@ -44,7 +44,7 @@ export const Navbar = () => (
 
       <NavbarMenuToggle className="md:hidden" />
 
-      <ThemeSwitch />
+      <ThemeSwitch className="ml-4" />
     </NavbarContent>
 
     <NavbarMenu>
