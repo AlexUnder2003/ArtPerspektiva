@@ -1,9 +1,3 @@
-// MasonryGrid.tsx
-// Tailwind + HeroUI + Masonry (columns-*) + IntersectionObserver
-// • title + author·year caption
-// • overlay‑tags + eye icon on hover
-// • larger «+» Iconify button for favourites
-
 import { Card } from "@heroui/react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
@@ -102,7 +96,7 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ pageSize = 20 }) => {
 
   return (
     <>
-      <section className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 px-2 mx-auto max-w-none">
+      <section className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 px-2 mx-auto max-w-none pt-2">
         {items.map((item) => (
           <div key={item.id} className="break-inside-avoid w-full">
             <Card
