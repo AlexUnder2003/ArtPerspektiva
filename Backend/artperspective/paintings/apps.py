@@ -1,0 +1,8 @@
+from django.apps import AppConfig
+
+
+class PaintingsConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "paintings"
+    verbose_name = "Картины"
+    verbose_name_plural = "Картины"
