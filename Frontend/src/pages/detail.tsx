@@ -54,33 +54,34 @@
       </div>
 
       {/* Правый блок: 50% ширины */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-between">
+      <div className="w-full lg:w-1/2 flex flex-col">
         {/* Описание и автор */}
         <div>
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex  justify-end mb-4 w-full">
             <Avatar
               src="/photos/unnamed.jpg"
               alt="Илья Репин"
               size="lg"
+              className="mr-4"
             />
             <div>
               <h2 className="text-2xl font-sans">Papirosa in the woods</h2>
               <p className="text-xl font-bold">Илья Репин</p>
             </div>
-            <div className="flex flex-wrap gap-4 justify-end ml-auto">
-              <Button
-                variant="outline"
-                onClick={handleFavorite}
-                className="min-w-[180px] flex items-center justify-center space-x-2"
-              >
-                <span>Добавить в избранное</span>
-              </Button>
+            <div className="flex flex-wrap gap-4  ml-auto">
               <Button
                 variant="solid"
                 onClick={handleContact}
                 className="min-w-[200px] flex items-center justify-center space-x-2"
               >
                 <span>Связаться с продавцом</span>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleFavorite}
+                className="min-w-[180px] flex items-center justify-center space-x-2"
+              >
+                <span>Добавить в избранное</span>
               </Button>
             </div>
           </div>
@@ -92,8 +93,6 @@
             фотографии, запечатлевшие художника вместе с его великими современниками.
           </p>
         </div>
-
-        {/* Кнопки */}
         
       </div>
     </div>
