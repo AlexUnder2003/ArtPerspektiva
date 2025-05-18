@@ -1,12 +1,14 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+
 
 from api.serializers import (
-    PaintingReadSerializer,
-    PaintingWriteSerializer,
+    PaintingSerializer,
     SimilarPaintingSerializer,
     FavoriteSerializer,
 )
@@ -14,28 +16,41 @@ from paintings.models import Favorite, Painting
 from paintings.utils import similar_to
 
 
-class PaintingViewSet(viewsets.ModelViewSet):
-    queryset = Painting.objects.all().prefetch_related("tags")
-    serializer_class = PaintingReadSerializer
+class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    GET список и детали картин + экшены для управления лайками и просмотра похожих.
+    Создавать/обновлять/удалять картины могут только админы (например, через админ-панель).
+    """
 
-    def get_serializer_class(self):
-        if self.action in ["create", "update", "partial_update"]:
-            return PaintingWriteSerializer
-        return PaintingReadSerializer
+    queryset = Painting.objects.all().prefetch_related("tags")
+    serializer_class = PaintingSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(
         detail=True, methods=["post"], permission_classes=[IsAuthenticated]
     )
     def favorite(self, request, pk=None):
+        """
+        POST /paintings/{pk}/favorite/ — поставить лайк (создать Favorite),
+        если ещё не был установлен.
+        """
         painting = self.get_object()
         fav, created = Favorite.objects.get_or_create(
             user=request.user, painting=painting
         )
+        if not created:
+            return Response(
+                {"detail": "Painting is already liked."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = FavoriteSerializer(fav)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk=None):
+        """
+        DELETE /paintings/{pk}/favorite/ — снять лайк.
+        """
         deleted, _ = Favorite.objects.filter(
             user=request.user, painting__id=pk
         ).delete()
@@ -45,10 +60,12 @@ class PaintingViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"])
     def similar(self, request, pk=None):
+        """
+        GET /paintings/{pk}/similar/ — список похожих картин.
+        """
         painting = self.get_object()
         qs = similar_to(painting)
         page = self.paginate_queryset(qs)
-
         serializer = SimilarPaintingSerializer(
             page if page is not None else qs,
             many=True,
@@ -60,11 +77,7 @@ class PaintingViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteListViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    GET /favorites/ — список картин, лайкнутых текущим пользователем.
-    """
-
-    serializer_class = PaintingReadSerializer
+    serializer_class = PaintingSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):

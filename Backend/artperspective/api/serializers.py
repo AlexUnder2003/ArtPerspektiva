@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from paintings.models import Painting, Favorite, Tags
+from paintings.models import Painting, Favorite
 
 
-class PaintingReadSerializer(serializers.ModelSerializer):
+class PaintingSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(
         many=True, read_only=True, slug_field="name"
     )
@@ -14,26 +14,17 @@ class PaintingReadSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "created_at", "updated_at"]
 
 
-class PaintingWriteSerializer(serializers.ModelSerializer):
-    tags = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Tags.objects.all()
-    )
-
-    class Meta:
-        model = Painting
-        fields = "__all__"
-        read_only_fields = ["id", "created_at", "updated_at"]
-
-
 class FavoriteSerializer(serializers.ModelSerializer):
+    pass
+
     class Meta:
         model = Favorite
         fields = "__all__"
         read_only_fields = ["id"]
 
 
-class SimilarPaintingSerializer(PaintingReadSerializer):
+class SimilarPaintingSerializer(PaintingSerializer):
     shared_tags = serializers.IntegerField(read_only=True)
 
-    class Meta(PaintingReadSerializer.Meta):
+    class Meta(PaintingSerializer.Meta):
         pass
