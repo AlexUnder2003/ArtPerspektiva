@@ -7,6 +7,7 @@ class PaintingSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(
         many=True, read_only=True, slug_field="name"
     )
+    artist = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
     class Meta:
         model = Painting

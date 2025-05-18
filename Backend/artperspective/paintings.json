@@ -19,12 +19,41 @@
     "pk": 4,
     "fields": { "name": "Expressionism" }
   },
+
+  {
+    "model": "paintings.artist",
+    "pk": 1,
+    "fields": {
+      "name": "Vincent van Gogh",
+      "bio": "Dutch post-Impressionist painter known for his vivid colors and emotional honesty.",
+      "image": "artists/vincent_van_gogh.jpg"
+    }
+  },
+  {
+    "model": "paintings.artist",
+    "pk": 2,
+    "fields": {
+      "name": "Leonardo da Vinci",
+      "bio": "Italian High Renaissance polymath: painter, engineer, scientist and theorist.",
+      "image": "artists/leonardo_da_vinci.jpg"
+    }
+  },
+  {
+    "model": "paintings.artist",
+    "pk": 3,
+    "fields": {
+      "name": "Edvard Munch",
+      "bio": "Norwegian Symbolist painter, best known for his work The Scream.",
+      "image": "artists/edvard_munch.jpg"
+    }
+  },
+
   {
     "model": "paintings.painting",
     "pk": 1,
     "fields": {
       "title": "Starry Night",
-      "artist": "Vincent van Gogh",
+      "artist": 1,
       "year": 1889,
       "image": "paintings/starry_night.jpg",
       "description": "A swirling night sky over the Rhône river.",
@@ -38,7 +67,7 @@
     "pk": 2,
     "fields": {
       "title": "Mona Lisa",
-      "artist": "Leonardo da Vinci",
+      "artist": 2,
       "year": 1503,
       "image": "paintings/mona_lisa.jpg",
       "description": "A portrait of Lisa Gherardini with an enigmatic smile.",
@@ -52,7 +81,7 @@
     "pk": 3,
     "fields": {
       "title": "The Scream",
-      "artist": "Edvard Munch",
+      "artist": 3,
       "year": 1893,
       "image": "paintings/the_scream.jpg",
       "description": "An agonized figure against a blood-red sky.",
@@ -61,6 +90,7 @@
       "updated_at": "2025-05-10T12:00:00Z"
     }
   },
+
   {
     "model": "paintings.paintingtag",
     "pk": 1,

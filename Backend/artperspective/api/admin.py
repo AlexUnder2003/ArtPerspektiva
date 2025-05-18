@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from paintings.models import Tags, Painting, PaintingTag, Favorite
+from paintings.models import Artist, Tags, Painting, PaintingTag, Favorite
 
 User = get_user_model()
 typ = PaintingTag
@@ -11,6 +11,12 @@ typ = PaintingTag
 class PaintingTagInline(admin.TabularInline):
     model = PaintingTag
     extra = 1
+
+
+@admin.register(Artist)
+class ArtistAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
 
 
 @admin.register(Painting)

@@ -14,9 +14,25 @@ class Tags(models.Model):
         return self.name
 
 
+class Artist(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Имя художника")
+    bio = models.TextField(verbose_name="Биография")
+    image = models.ImageField(upload_to="artists/", verbose_name="Изображение")
+
+    class Meta:
+        verbose_name = "Художник"
+        verbose_name_plural = "Художники"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Painting(models.Model):
     title = models.CharField(max_length=255, verbose_name="Название")
-    artist = models.CharField(max_length=255, verbose_name="Художник")
+    artist = models.ForeignKey(
+        Artist, on_delete=models.CASCADE, verbose_name="Художник"
+    )
     year = models.IntegerField(verbose_name="Год создания")
     image = models.ImageField(
         upload_to="paintings/", verbose_name="Изображение"
