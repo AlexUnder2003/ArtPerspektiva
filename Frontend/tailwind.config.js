@@ -1,5 +1,5 @@
-import {heroui} from "@heroui/theme"
-import defaultTheme   from 'tailwindcss/defaultTheme.js';
+import { heroui } from "@heroui/theme";
+import defaultTheme from 'tailwindcss/defaultTheme.js';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -17,8 +17,6 @@ export default {
       },
     },
   },
-
-  // 2) чтобы HeroUI-компоненты использовали тот же шрифт
   plugins: [
     heroui({
       layout: {
@@ -26,7 +24,16 @@ export default {
           sans: '"Golos Text", ui-sans-serif, system-ui',
         },
       },
-
+      themes: {
+        light: {
+          // светлая тема без изменений
+        },
+        dark: {
+          colors: {
+            background: '#2d2d2e',
+          },
+        },
+      },
     }),
   ],
 }
