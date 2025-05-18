@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
   Accordion,
@@ -14,6 +12,8 @@ import {
   cn,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
+// Import SVG as React component via SVGR
+import { ARTLOGO } from "../icons/Artlogo";
 
 export enum SidebarItemType {
   Nest = "nest",
@@ -73,6 +73,8 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
       base: cn(itemClassesProp.base, { 'w-11 h-11 gap-0 p-0': isCompact }),
     };
 
+    const logoClass = cn('w-6 h-6 text-default-500 group-data-[selected=true]:text-foreground', iconClassName);
+
     const renderNestItem = React.useCallback(
       (item: SidebarItem) => {
         const isNest = item.type === SidebarItemType.Nest && item.items?.length;
@@ -89,7 +91,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
               ),
             }}
             startContent={!isCompact && item.key === 'home' ? (
-              <img src="/ARTLOGO.svg" alt="Logo" className={cn('w-6 h-6', iconClassName)} />
+              <ARTLOGO className={logoClass} aria-label="Logo" />
             ) : !isCompact && item.icon ? (
               <Icon icon={item.icon} width={24} className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} />
             ) : null}
@@ -100,7 +102,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
               <Tooltip content={item.title} placement="right">
                 <div className="flex w-full items-center justify-center">
                   {item.key === 'home' ? (
-                    <img src="/ARTLOGO.svg" alt="Logo" className={cn('w-6 h-6', iconClassName)} />
+                    <ARTLOGO className={logoClass} aria-label="Logo" />
                   ) : item.icon ? (
                     <Icon icon={item.icon} width={24} className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} />
                   ) : null}
@@ -116,7 +118,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                     title={
                       <div className="flex h-11 items-center gap-2 px-2 py-1.5">
                         {item.key === 'home' ? (
-                          <img src="/ARTLOGO.svg" alt="Logo" className={cn('w-6 h-6', iconClassName)} />
+                          <ARTLOGO className={logoClass} aria-label="Logo" />
                         ) : item.icon ? (
                           <Icon icon={item.icon} width={24} className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} />
                         ) : null}
@@ -147,7 +149,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
             {...item}
             key={item.key}
             startContent={!isCompact && item.key === 'home' ? (
-              <img src="/ARTLOGO.svg" alt="Logo" className={cn('w-6 h-6', iconClassName)} />
+              <ARTLOGO className={logoClass} aria-label="Logo" />
             ) : !isCompact && item.icon ? (
               <Icon icon={item.icon} width={24} className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} />
             ) : null}
@@ -159,7 +161,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
               <Tooltip content={item.title} placement="right">
                 <div className="flex w-full items-center justify-center">
                   {item.key === 'home' ? (
-                    <img src="/ARTLOGO.svg" alt="Logo" className={cn('w-6 h-6', iconClassName)} />
+                    <ARTLOGO className={logoClass} aria-label="Logo" />
                   ) : item.icon ? (
                     <Icon icon={item.icon} width={24} className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} />
                   ) : null}
