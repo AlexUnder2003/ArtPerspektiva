@@ -1,8 +1,3 @@
-// MasonryGrid.tsx
-// Версия без «рандомных» картинок: отображаются ТОЛЬКО те, что пришли в prop testPhotos
-//  — никакой бесконечной подгрузки picsum.photos
-//  — всё остальное (Masonry, overlay, подписи) сохранено
-
 import { Card } from "@heroui/react";
 import { FC, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
@@ -84,11 +79,13 @@ export const MasonryGrid: FC<MasonryGridProps> = ({ testPhotos }) => {
           {/* caption */}
           <div className="flex items-start justify-between pt-2 px-1">
             <div className="flex flex-col">
-              <span className="text-base font-medium  leading-tight">{item.title}</span>
-              <span className="text-sm ">{item.author} · {item.year}</span>
+              {/* Название простым шрифтом */}
+              <span className="text-base font-normal leading-tight">{item.title}</span>
+              {/* Автор выделен жирным и чуть больше */}
+              <span className="text-l font-bold leading-tight">{item.author}  {item.year}</span>
             </div>
-            <button type="button" className="p-1 rounded-full hover:bg-gray-700/20 transition self-start" aria-label="Add to favourites">
-              <Icon icon="mdi:plus" width="22" />
+            <button type="button" className="p-2 rounded-full hover:bg-gray-700/20 transition self-start" aria-label="Add to favourites">
+              <Icon icon="mdi:plus" width="27" />
             </button>
           </div>
         </div>
