@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -23,6 +23,26 @@ class PaintingViewSet(viewsets.ModelViewSet):
             return PaintingWriteSerializer
         return PaintingReadSerializer
 
+    @action(
+        detail=True, methods=["post"], permission_classes=[IsAuthenticated]
+    )
+    def favorite(self, request, pk=None):
+        painting = self.get_object()
+        fav, created = Favorite.objects.get_or_create(
+            user=request.user, painting=painting
+        )
+        serializer = FavoriteSerializer(fav)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @favorite.mapping.delete
+    def unfavorite(self, request, pk=None):
+        deleted, _ = Favorite.objects.filter(
+            user=request.user, painting__id=pk
+        ).delete()
+        if deleted:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
     @action(detail=True, methods=["get"])
     def similar(self, request, pk=None):
         painting = self.get_object()
@@ -39,9 +59,13 @@ class PaintingViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class FavoriteViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoriteSerializer
+class FavoriteListViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    GET /favorites/ — список картин, лайкнутых текущим пользователем.
+    """
+
+    serializer_class = PaintingReadSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Favorite.objects.filter(user=self.request.user)
+        return Painting.objects.filter(favorite__user=self.request.user)
