@@ -20,6 +20,9 @@ export default function DefaultLayout({
       </aside>
 
       <div className="flex flex-col flex-1 min-w-0">
+        <header className="w-full flex items-center justify-center px-4 pt-4  bg-background">
+          <h1 className="text-2xl font-sans">ART PERSPEKTIVA</h1>
+        </header>
         <Navbar />
 
         <main className="flex-1 overflow-y-auto px-4 pt-2">
