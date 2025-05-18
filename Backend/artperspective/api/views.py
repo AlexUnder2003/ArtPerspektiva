@@ -1,14 +1,16 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 
 from api.serializers import (
     PaintingReadSerializer,
     PaintingWriteSerializer,
     SimilarPaintingSerializer,
+    FavoriteSerializer,
 )
-
-from paintings.models import Painting
+from paintings.models import Favorite, Painting
 from paintings.utils import similar_to
 
 
@@ -35,3 +37,11 @@ class PaintingViewSet(viewsets.ModelViewSet):
         if page is not None:
             return self.get_paginated_response(serializer.data)
         return Response(serializer.data)
+
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
