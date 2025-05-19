@@ -30,7 +30,7 @@ export default {
         },
         dark: {
           colors: {
-            background: '#2d2d2e',
+            background: '#1E1E1E',
           },
         },
       },
