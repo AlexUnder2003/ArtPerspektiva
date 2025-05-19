@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardHeader, Avatar, Image, Button } from "@heroui/react";
+import { Avatar, Image, Button } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { Icon } from "@iconify/react";
 import { MasonryGridDebug } from "@/components/mansorytest";
@@ -55,19 +55,22 @@ const ArtDetailPage = () => {
           {/* Правый блок: 50% ширины */}
           <div className="w-full lg:w-1/2 flex flex-col">
             {/* Описание и автор */}
-            <div>
-              <div className="flex flex-col lg:flex-row items-start lg:items-center mb-4 w-full space-y-4 lg:space-y-0 lg:space-x-4">
-                <Avatar
-                  src="/photos/unnamed.jpg"
-                  alt="Илья Репин"
-                  size="lg"
-                  className="mr-4"
-                />
-                <div>
-                  <h2 className="text-2xl font-sans">Papirosa in the woods</h2>
-                  <p className="text-xl font-bold">Илья Репин</p>
+            <div className="mb-4">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full space-y-4 lg:space-y-0 lg:space-x-4">
+                {/* Аватар и текст */}
+                <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-4">
+                  <Avatar
+                    src="/photos/unnamed.jpg"
+                    alt="Илья Репин"
+                    size="lg"
+                  />
+                  <div>
+                    <h2 className="text-2xl font-sans">Papirosa in the woods</h2>
+                    <p className="text-xl font-bold">Илья Репин</p>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-4 lg:ml-auto">
+                {/* Кнопки */}
+                <div className="flex flex-wrap gap-4">
                   <Button
                     variant="solid"
                     onClick={handleContact}
@@ -84,10 +87,10 @@ const ArtDetailPage = () => {
                   </Button>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold mb-2 font-sans">
+              <h3 className="text-xl font-semibold mt-4 font-sans">
                 Работа датируется 01.02.3050
               </h3>
-              <p className="leading-relaxed font-sans mb-6">
+              <p className="leading-relaxed font-sans mt-2 mb-6">
                 Вашему вниманию предлагается уникальная подборка редких прижизненных фотографий Репина. Особенно интересны
                 фотографии, запечатлевшие художника вместе с его великими современниками.
               </p>

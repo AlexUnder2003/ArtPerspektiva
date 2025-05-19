@@ -12,7 +12,6 @@ import {
   cn,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
-// Import SVG as React component via SVGR
 import { ARTLOGO } from "../icons/Artlogo";
 
 export enum SidebarItemType {
@@ -73,7 +72,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
       base: cn(itemClassesProp.base, { 'w-11 h-11 gap-0 p-0': isCompact }),
     };
 
-    const logoClass = cn('w-6 h-6 text-default-500 group-data-[selected=true]:text-foreground', iconClassName);
+    const logoClass = cn('w-6 h-6 group-data-[selected=true]:text-primary', iconClassName);
 
     const renderNestItem = React.useCallback(
       (item: SidebarItem) => {
@@ -91,7 +90,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
               ),
             }}
             startContent={!isCompact && item.key === 'home' ? (
-              <ARTLOGO className={logoClass} aria-label="Logo" />
+              <ARTLOGO className={logoClass}  aria-label="Logo" />
             ) : !isCompact && item.icon ? (
               <Icon icon={item.icon} width={24} className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} />
             ) : null}

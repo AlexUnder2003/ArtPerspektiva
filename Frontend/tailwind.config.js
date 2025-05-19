@@ -26,10 +26,14 @@ export default {
       },
       themes: {
         light: {
+          colors: {
+            primary: "#1E1E1E"
+          }
           // светлая тема без изменений
         },
         dark: {
           colors: {
+            primary: "#ffffff",
             background: '#1E1E1E',
           },
         },
