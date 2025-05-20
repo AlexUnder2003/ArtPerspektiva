@@ -1,20 +1,27 @@
-# Используем официальный образ Node.js для Alpine
-FROM node:18-alpine AS base
+# 1. Собираем фронтенд
+FROM node:18-alpine AS builder
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем package.json и package-lock.json (если есть)
+# Копируем пакеты и устанавливаем зависимости
 COPY package.json package-lock.json* ./
+RUN npm ci --legacy-peer-deps --silent
 
-# Устанавливаем зависимости (включая dev-зависимости для dev-сервера)
-RUN npm install --legacy-peer-deps --silent
-
-# Копируем весь исходный код
+# Копируем весь код и делаем продакшен–билд
 COPY . .
+RUN npm run build
 
-# Пробрасываем порт Vite dev-сервера
-EXPOSE 5173
+# 2. Собираем nginx с уже готовыми статиками
+FROM nginx:alpine
 
-# Запускаем dev-сервер при старте контейнера
-CMD ["npm", "run", "dev"]
+# Опционально: свой конфиг nginx
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Копируем результат сборки из предыдущего этапа
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Открываем 80-й порт
+EXPOSE 80
+
+# Запускаем nginx в форграунде
+CMD ["nginx", "-g", "daemon off;"]
