@@ -81,8 +81,8 @@ const ArtDetailPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full mx-auto px-4 py-4">
-        <div className="flex flex-col lg:flex-row gap-8 pb-8" id="top">
+      <div className="w-full mx-auto px-4 py-4" id="top">
+        <div className="flex flex-col lg:flex-row gap-8 pb-8">
           {/* Левая колонка: изображение */}
           <div className="w-full lg:w-1/2 flex justify-center items-center overflow-hidden">
             <Image
