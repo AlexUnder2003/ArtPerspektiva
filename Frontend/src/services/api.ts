@@ -25,7 +25,7 @@ export interface Artist {
   paintings: Painting[];
 }
 
-const BASE = "http://localhost:8000/api";
+const BASE = "/api";
 
 export const fetchPaintings = async (): Promise<Painting[]> => {
   const { data } = await axios.get<Painting[]>(`${BASE}/paintings/`);

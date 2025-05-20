@@ -1,27 +1,15 @@
-# 1. Собираем фронтенд
+# Frontend/Dockerfile
+
+# 1) Stage: builder
 FROM node:18-alpine AS builder
-
 WORKDIR /app
-
-# Копируем пакеты и устанавливаем зависимости
 COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps --silent
-
-# Копируем весь код и делаем продакшен–билд
+RUN npm ci --legacy-peer-deps
 COPY . .
 RUN npm run build
 
-# 2. Собираем nginx с уже готовыми статиками
+# 2) Stage: nginx
 FROM nginx:alpine
-
-# Опционально: свой конфиг nginx
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Копируем результат сборки из предыдущего этапа
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Открываем 80-й порт
-EXPOSE 80
-
-# Запускаем nginx в форграунде
-CMD ["nginx", "-g", "daemon off;"]
+# (по желанию) ваш конфиг:
+COPY nginx.conf /etc/nginx/conf.d/default.conf
