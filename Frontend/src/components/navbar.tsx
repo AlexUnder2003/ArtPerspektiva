@@ -54,6 +54,13 @@ export const Navbar = () => {
     setOpen(query.trim().length > 0);
   }, [query, fetchResults]);
 
+  const handleSelect = () => {
+    // Закрыть выпадашку
+    setOpen(false);
+    // Закрыть мобильное меню (если открыто)
+    setIsMenuOpen(false);
+  };
+
   return (
     <HeroUINavbar
       position="sticky"
@@ -92,6 +99,7 @@ export const Navbar = () => {
                       key={p.id}
                       href={`/detail/${p.id}`}
                       className="block px-2 py-1 rounded hover:bg-default-100"
+                      onClick={handleSelect}
                     >
                       {p.title} — {p.artist}
                     </Link>
@@ -106,6 +114,7 @@ export const Navbar = () => {
                       key={a.id}
                       href={`/artists/${a.id}`}
                       className="block px-2 py-1 rounded hover:bg-default-100"
+                      onClick={handleSelect}
                     >
                       {a.name}
                     </Link>
@@ -128,7 +137,7 @@ export const Navbar = () => {
               type="search"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Search paintings & authors…"
+              placeholder="Введите автора или название"
               fullWidth
               className="w-full max-w-none font-sans"
               startContent={<SearchIcon className="text-default-400" />}
@@ -144,7 +153,7 @@ export const Navbar = () => {
                         key={p.id}
                         href={`/detail/${p.id}`}
                         className="block px-2 py-1 rounded hover:bg-default-100"
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={handleSelect}
                       >
                         {p.title} — {p.artist}
                       </Link>
@@ -159,7 +168,7 @@ export const Navbar = () => {
                         key={a.id}
                         href={`/artists/${a.id}`}
                         className="block px-2 py-1 rounded hover:bg-default-100"
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={handleSelect}
                       >
                         {a.name}
                       </Link>
@@ -182,7 +191,10 @@ export const Navbar = () => {
                     ? "danger"
                     : "foreground"
                 }
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setOpen(false);
+                }}
               >
                 {label}
               </Link>
