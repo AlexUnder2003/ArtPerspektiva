@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Avatar, Image, Button } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { Icon } from "@iconify/react";
@@ -16,6 +16,7 @@ const ArtDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const paintingId = Number(id);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [painting, setPainting] = useState<Painting | null>(null);
   const [related, setRelated] = useState<Painting[]>([]);
@@ -23,12 +24,13 @@ const ArtDetailPage: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
+    
     if (!paintingId) return;
 
     fetchPaintingById(paintingId)
       .then(data => {
         setPainting(data);
-        return fetchArtistById((data as any).artist_id);
+        return fetchArtistById(data.artist_id);
       })
       .then(setArtist)
       .catch(err => console.error(err));
@@ -57,6 +59,16 @@ const ArtDetailPage: React.FC = () => {
     console.log("Добавлено в избранное:", painting?.id);
   };
 
+  // 2) Следим за хэшем в URL и скроллим к элементу с этим id
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.getElementById(location.hash.slice(1));
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [location]);
+
   if (!painting) {
     return (
       <DefaultLayout>
@@ -70,7 +82,7 @@ const ArtDetailPage: React.FC = () => {
   return (
     <DefaultLayout>
       <div className="w-full mx-auto px-4 py-4">
-        <div className="flex flex-col lg:flex-row gap-8 pb-8">
+        <div className="flex flex-col lg:flex-row gap-8 pb-8" id="top">
           {/* Левая колонка: изображение */}
           <div className="w-full lg:w-1/2 flex justify-center items-center overflow-hidden">
             <Image
@@ -158,7 +170,10 @@ const ArtDetailPage: React.FC = () => {
           </div>
           <MasonryGrid
             items={related}
-            onItemClick={pid => navigate(`/detail/${pid}`)}
+            onItemClick={pid =>
+              // добавляем хэш в URL
+              navigate(`/detail/${pid}#top`)
+            }
           />
         </div>
 
