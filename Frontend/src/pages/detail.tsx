@@ -1,54 +1,60 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Avatar, Image, Button } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { Icon } from "@iconify/react";
 import { MasonryGrid } from "@/components/masonrygrid";
 import {
   Painting,
+  Artist,
   fetchPaintingById,
-  fetchSimilarPaintings, // <-- импортируем новый метод
+  fetchSimilarPaintings,
+  fetchArtistById,
 } from "@/services/api";
 
-const ArtDetailPage = () => {
+const ArtDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const paintingId = Number(id);
   const navigate = useNavigate();
 
   const [painting, setPainting] = useState<Painting | null>(null);
   const [related, setRelated] = useState<Painting[]>([]);
+  const [artist, setArtist] = useState<Artist | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    if (!paintingId) return;
 
     fetchPaintingById(paintingId)
-      .then(setPainting)
+      .then(data => {
+        setPainting(data);
+        return fetchArtistById((data as any).artist_id);
+      })
+      .then(setArtist)
       .catch(err => console.error(err));
 
-    // <-- получаем похожие работы с бэка
     fetchSimilarPaintings(paintingId)
       .then(setRelated)
       .catch(err => console.error(err));
-  }, [paintingId, id]);
+  }, [paintingId]);
 
+  const handleArtistClick = () => {
+    if (artist) navigate(`/artist/${artist.id}`);
+  };
   const handleOpen = () => {
     document.body.style.overflow = "hidden";
     setIsFullscreen(true);
   };
-
-  const handleClose = (e) => {
+  const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
     document.body.style.overflow = "";
     setIsFullscreen(false);
   };
-
-  const handleFavorite = () => {
-    console.log("Добавлено в избранное:", painting?.id);
-  };
-
   const handleContact = () => {
     console.log("Связаться с продавцом для", painting?.id);
+  };
+  const handleFavorite = () => {
+    console.log("Добавлено в избранное:", painting?.id);
   };
 
   if (!painting) {
@@ -65,6 +71,7 @@ const ArtDetailPage = () => {
     <DefaultLayout>
       <div className="w-full mx-auto px-4 py-4">
         <div className="flex flex-col lg:flex-row gap-8 pb-8">
+          {/* Левая колонка: изображение */}
           <div className="w-full lg:w-1/2 flex justify-center items-center overflow-hidden">
             <Image
               src={painting.image}
@@ -74,16 +81,32 @@ const ArtDetailPage = () => {
             />
           </div>
 
+          {/* Правая колонка: художник + детали */}
           <div className="w-full lg:w-1/2 flex flex-col">
             <div className="mb-4">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full space-y-4 lg:space-y-0 lg:space-x-4">
-                <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-4">
-                  <Avatar src={painting.image} alt={painting.artist} size="lg" />
+                {/* Аватар художника */}
+                <div
+                  className="flex items-center gap-4 cursor-pointer"
+                  onClick={handleArtistClick}
+                >
+                  <Avatar
+                    src={artist?.image || ""}
+                    alt={artist?.name || ""}
+                    size="lg"
+                  />
                   <div>
-                    <h2 className="text-2xl font-sans">{painting.title}</h2>
-                    <p className="text-xl font-bold">{painting.artist}</p>
+                    <h2 className="text-2xl font-sans">
+                      {artist?.name}
+                    </h2>
+                    {/* вместо "Художник" выводим название картины */}
+                    <p className="text-xl font-bold">
+                      {painting.title}
+                    </p>
                   </div>
                 </div>
+
+                {/* Кнопки */}
                 <div className="flex flex-wrap gap-4">
                   <Button
                     variant="solid"
@@ -101,15 +124,22 @@ const ArtDetailPage = () => {
                   </Button>
                 </div>
               </div>
+
+              {/* Дата и описание */}
               <h3 className="text-xl font-semibold mt-4 font-sans">
                 Работа датируется {painting.year}
               </h3>
               <p className="leading-relaxed font-sans mt-2 mb-6">
                 {painting.description}
               </p>
+
+              {/* Теги */}
               <div className="flex space-x-2 flex-wrap">
                 {painting.tags.map(tag => (
-                  <span key={tag} className="px-2 py-1 bg-foreground rounded-full  text-background">
+                  <span
+                    key={tag}
+                    className="px-2 py-1 bg-foreground rounded-full text-background"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -118,6 +148,7 @@ const ArtDetailPage = () => {
           </div>
         </div>
 
+        {/* Похожие работы */}
         <div className="mt-12">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold font-sans">Похожие работы</h3>
@@ -127,16 +158,20 @@ const ArtDetailPage = () => {
           </div>
           <MasonryGrid
             items={related}
-            onItemClick={(id) => navigate(`/detail/${id}`)}
+            onItemClick={pid => navigate(`/detail/${pid}`)}
           />
         </div>
 
+        {/* Fullscreen-модалка */}
         {isFullscreen && (
           <div
             className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 overflow-hidden"
             onClick={handleClose}
           >
-            <button className="absolute top-4 right-4 p-2" onClick={handleClose}>
+            <button
+              className="absolute top-4 right-4 p-2"
+              onClick={handleClose}
+            >
               <Icon icon="mdi:close" width="28" color="#fff" />
             </button>
             <img

@@ -1,18 +1,19 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import (
     IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
 )
 
 
 from api.serializers import (
+    ArtistSerializer,
     PaintingSerializer,
     SimilarPaintingSerializer,
     FavoriteSerializer,
+    TagSerializer,
 )
-from paintings.models import Favorite, Painting
+from paintings.models import Artist, Favorite, Painting, Tags
 from paintings.utils import similar_to
 
 
@@ -24,7 +25,6 @@ class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Painting.objects.all().prefetch_related("tags")
     serializer_class = PaintingSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(
         detail=True, methods=["post"], permission_classes=[IsAuthenticated]
@@ -82,3 +82,13 @@ class FavoriteListViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return Painting.objects.filter(favorite__user=self.request.user)
+
+
+class ArtistListViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ArtistSerializer
+    queryset = Artist.objects.all().prefetch_related("paintings")
+
+
+class TagsListView(generics.ListAPIView):
+    serializer_class = TagSerializer
+    queryset = Tags.objects.all()

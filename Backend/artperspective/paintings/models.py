@@ -31,7 +31,10 @@ class Artist(models.Model):
 class Painting(models.Model):
     title = models.CharField(max_length=255, verbose_name="Название")
     artist = models.ForeignKey(
-        Artist, on_delete=models.CASCADE, verbose_name="Художник"
+        Artist,
+        on_delete=models.CASCADE,
+        verbose_name="Художник",
+        related_name="paintings",
     )
     year = models.IntegerField(verbose_name="Год создания")
     image = models.ImageField(

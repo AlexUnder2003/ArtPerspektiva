@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from paintings.models import Painting, Favorite
+from paintings.models import Artist, Painting, Favorite, Tags
 
 
 class PaintingSerializer(serializers.ModelSerializer):
@@ -8,6 +8,9 @@ class PaintingSerializer(serializers.ModelSerializer):
         many=True, read_only=True, slug_field="name"
     )
     artist = serializers.SlugRelatedField(read_only=True, slug_field="name")
+    artist_id = serializers.PrimaryKeyRelatedField(
+        source="artist", read_only=True
+    )
 
     class Meta:
         model = Painting
@@ -29,3 +32,18 @@ class SimilarPaintingSerializer(PaintingSerializer):
 
     class Meta(PaintingSerializer.Meta):
         pass
+
+
+class ArtistSerializer(serializers.ModelSerializer):
+    paintings = PaintingSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Artist
+        fields = "__all__"
+
+
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tags
+        fields = "__all__"
