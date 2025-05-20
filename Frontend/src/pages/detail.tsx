@@ -1,75 +1,89 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Avatar, Image, Button } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { Icon } from "@iconify/react";
-import { MasonryGridDebug } from "@/components/mansorytest";
-
-import p1 from "../photos/1.jpg";
-import p2 from "../photos/2.jpg";
-import p3 from "../photos/3.jpg";
-import p4 from "../photos/4.jpg";
-import p5 from "../photos/5.jpg";
-import p6 from "../photos/6.jpg";
-import p7 from "../photos/7.jpg";
-import p8 from "../photos/8.jpg";
-import p9 from "../photos/9.jpg";
+import { MasonryGrid } from "@/components/masonrygrid";
+import {
+  Painting,
+  fetchPaintingById,
+  fetchSimilarPaintings, // <-- импортируем новый метод
+} from "@/services/api";
 
 const ArtDetailPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const paintingId = Number(id);
+  const navigate = useNavigate();
+
+  const [painting, setPainting] = useState<Painting | null>(null);
+  const [related, setRelated] = useState<Painting[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  useEffect(() => {
+    if (!id) return;
+
+    fetchPaintingById(paintingId)
+      .then(setPainting)
+      .catch(err => console.error(err));
+
+    // <-- получаем похожие работы с бэка
+    fetchSimilarPaintings(paintingId)
+      .then(setRelated)
+      .catch(err => console.error(err));
+  }, [paintingId, id]);
+
   const handleOpen = () => {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     setIsFullscreen(true);
   };
 
   const handleClose = (e) => {
     e.stopPropagation();
-    document.body.style.overflow = '';
+    document.body.style.overflow = "";
     setIsFullscreen(false);
   };
 
   const handleFavorite = () => {
-    // TODO: добавить логику добавления в избранное
-    console.log('Добавлено в избранное');
+    console.log("Добавлено в избранное:", painting?.id);
   };
 
   const handleContact = () => {
-    // TODO: добавить логику связи с продавцом (например, открытие формы или перенаправление)
-    console.log('Связаться с продавцом');
+    console.log("Связаться с продавцом для", painting?.id);
   };
+
+  if (!painting) {
+    return (
+      <DefaultLayout>
+        <div className="w-full mx-auto px-4 py-20 text-center">
+          Загрузка...
+        </div>
+      </DefaultLayout>
+    );
+  }
 
   return (
     <DefaultLayout>
       <div className="w-full mx-auto px-4 py-4">
         <div className="flex flex-col lg:flex-row gap-8 pb-8">
-          {/* Левый блок: 50% ширины, флекс-центровка */}
           <div className="w-full lg:w-1/2 flex justify-center items-center overflow-hidden">
             <Image
-              src="/photos/8.jpg"
-              alt="Работа Ильи Репина"
+              src={painting.image}
+              alt={painting.title}
               className="max-w-full max-h-[75vh] object-contain cursor-pointer"
               onClick={handleOpen}
             />
           </div>
 
-          {/* Правый блок: 50% ширины */}
           <div className="w-full lg:w-1/2 flex flex-col">
-            {/* Описание и автор */}
             <div className="mb-4">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full space-y-4 lg:space-y-0 lg:space-x-4">
-                {/* Аватар и текст */}
                 <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-4">
-                  <Avatar
-                    src="/photos/unnamed.jpg"
-                    alt="Илья Репин"
-                    size="lg"
-                  />
+                  <Avatar src={painting.image} alt={painting.artist} size="lg" />
                   <div>
-                    <h2 className="text-2xl font-sans">Papirosa in the woods</h2>
-                    <p className="text-xl font-bold">Илья Репин</p>
+                    <h2 className="text-2xl font-sans">{painting.title}</h2>
+                    <p className="text-xl font-bold">{painting.artist}</p>
                   </div>
                 </div>
-                {/* Кнопки */}
                 <div className="flex flex-wrap gap-4">
                   <Button
                     variant="solid"
@@ -88,28 +102,35 @@ const ArtDetailPage = () => {
                 </div>
               </div>
               <h3 className="text-xl font-semibold mt-4 font-sans">
-                Работа датируется 01.02.3050
+                Работа датируется {painting.year}
               </h3>
               <p className="leading-relaxed font-sans mt-2 mb-6">
-                Вашему вниманию предлагается уникальная подборка редких прижизненных фотографий Репина. Особенно интересны
-                фотографии, запечатлевшие художника вместе с его великими современниками.
+                {painting.description}
               </p>
+              <div className="flex space-x-2 flex-wrap">
+                {painting.tags.map(tag => (
+                  <span key={tag} className="px-2 py-1 bg-foreground rounded-full  text-background">
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* "Другие работы автора" снизу */}
         <div className="mt-12">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold font-sans">Другие работы автора</h3>
-            <Button variant="solid">
+            <h3 className="text-xl font-semibold font-sans">Похожие работы</h3>
+            <Button variant="solid" onClick={() => navigate("/")}>
               <span>Посмотреть все</span>
             </Button>
           </div>
-          <MasonryGridDebug testPhotos={[p1, p2, p3, p4, p5, p6, p7, p8, p9]} />
+          <MasonryGrid
+            items={related}
+            onItemClick={(id) => navigate(`/detail/${id}`)}
+          />
         </div>
 
-        {/* Fullscreen Overlay */}
         {isFullscreen && (
           <div
             className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 overflow-hidden"
@@ -119,8 +140,8 @@ const ArtDetailPage = () => {
               <Icon icon="mdi:close" width="28" color="#fff" />
             </button>
             <img
-              src="/photos/1.jpg"
-              alt="Работа Ильи Репина - полный экран"
+              src={painting.image}
+              alt={`${painting.title} - полный экран`}
               className="max-w-[100vw] max-h-[100vh] object-contain"
             />
           </div>

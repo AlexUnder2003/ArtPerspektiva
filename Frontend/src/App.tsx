@@ -10,12 +10,13 @@ import ArtDetailPage from "@/pages/detail";
 function App() {
   return (
     <Routes>
-      <Route element={<IndexPage />} path="/" />
-      <Route element={<DocsPage />} path="/docs" />
-      <Route element={<PricingPage />} path="/pricing" />
-      <Route element={<BlogPage />} path="/blog" />
-      <Route element={<AboutPage />} path="/about" />
-      <Route element={<ArtDetailPage />} path="/detail" />
+      <Route element={<IndexPage />}      path="/"       />
+      <Route element={<DocsPage />}       path="/docs"   />
+      <Route element={<PricingPage />}    path="/pricing"/>
+      <Route element={<BlogPage />}       path="/blog"   />
+      <Route element={<AboutPage />}      path="/about"  />
+      {/* Обратите внимание на :id в конце */}
+      <Route element={<ArtDetailPage />}  path="/detail/:id"/>
     </Routes>
   );
 }

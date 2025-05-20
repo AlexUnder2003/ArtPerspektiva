@@ -1,21 +1,27 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchPaintings, Painting } from "@/services/api";
+import { MasonryGrid } from "@/components/masonrygrid";
 import DefaultLayout from "@/layouts/default";
-import CategoriesTabs from "@/components/tabs";
-import { MasonryGridDebug } from "@/components/mansorytest";
-import p1 from "../photos/1.jpg"
-import p2 from "../photos/2.jpg"
-import p3 from "../photos/3.jpg"
-import p4 from "../photos/4.jpg"
-import p5 from "../photos/5.jpg"
-import p6 from "../photos/6.jpg"
-import p7 from "../photos/7.jpg"
-import p8 from "../photos/8.jpg"
-import p9 from "../photos/9.jpg"
 
-export default function IndexPage() {
+const IndexPage = () => {
+  const [paintings, setPaintings] = useState<Painting[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchPaintings().then(setPaintings);
+  }, []);
+
   return (
     <DefaultLayout>
-      <CategoriesTabs></CategoriesTabs>
-      <MasonryGridDebug testPhotos={[p1, p2, p3, p4, p5, p6, p7, p8, p9]} />
+      <div className="px-4 py-6">
+        <MasonryGrid
+          items={paintings}
+          onItemClick={(id) => navigate(`/detail/${id}`)}
+        />
+      </div>
     </DefaultLayout>
   );
-}
+};
+
+export default IndexPage;
