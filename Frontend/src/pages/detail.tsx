@@ -128,7 +128,6 @@ const ArtDetailPage: React.FC = () => {
                     <span>Связаться с продавцом</span>
                   </Button>
                   <Button
-                    variant="outline"
                     onClick={handleFavorite}
                     className="min-w-[180px] flex items-center justify-center space-x-2"
                   >
