@@ -25,6 +25,7 @@ export const Navbar = () => {
   const [paintings, setPaintings] = useState<Painting[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [open, setOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Debounced fetch
   const fetchResults = useCallback(
@@ -54,10 +55,16 @@ export const Navbar = () => {
   }, [query, fetchResults]);
 
   return (
-    <HeroUINavbar position="sticky" maxWidth="full" className="px-4">
+    <HeroUINavbar
+      position="sticky"
+      maxWidth="full"
+      className="px-4"
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent className="w-full grid items-center gap-2 grid-cols-[1fr_auto_auto]">
-        <div className="relative w-full">
-          {/* Сам инпут */}
+        {/* Desktop search (hidden on mobile) */}
+        <div className="relative w-full hidden md:block">
           <Input
             type="search"
             value={query}
@@ -75,10 +82,8 @@ export const Navbar = () => {
             aria-label="Search paintings and authors"
           />
 
-          {/* Выпадашка с результатами */}
           {open && (paintings.length > 0 || artists.length > 0) && (
             <div className="absolute top-full mt-1 w-full bg-background shadow-lg rounded-lg z-10 max-h-80 overflow-auto">
-              {/* Секции */}
               {paintings.length > 0 && (
                 <div className="px-4 py-2">
                   <h5 className="font-semibold text-sm mb-1">Paintings</h5>
@@ -116,8 +121,9 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu>
-        {/* В мобильном меню можно просто продублировать инпут без развёрнутой логики */}
-          <div className="px-4">
+        {/* Mobile search + dropdown */}
+        <div className="mx-4 mt-2 flex flex-col gap-2">
+          <div className="relative px-4 pt-12 pb-3">
             <Input
               type="search"
               value={query}
@@ -127,8 +133,43 @@ export const Navbar = () => {
               className="w-full max-w-none font-sans"
               startContent={<SearchIcon className="text-default-400" />}
             />
+
+            {open && (paintings.length > 0 || artists.length > 0) && (
+              <div className="absolute top-full left-4 right-4 mt-1 bg-background shadow-lg rounded-lg z-10 max-h-60 overflow-auto">
+                {paintings.length > 0 && (
+                  <div className="px-4 py-2">
+                    <h5 className="font-semibold text-sm mb-1">Paintings</h5>
+                    {paintings.map(p => (
+                      <Link
+                        key={p.id}
+                        href={`/detail/${p.id}`}
+                        className="block px-2 py-1 rounded hover:bg-default-100"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {p.title} — {p.artist}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                {artists.length > 0 && (
+                  <div className="px-4 py-2 border-t border-default-200">
+                    <h5 className="font-semibold text-sm mb-1">Artists</h5>
+                    {artists.map(a => (
+                      <Link
+                        key={a.id}
+                        href={`/artists/${a.id}`}
+                        className="block px-2 py-1 rounded hover:bg-default-100"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {a.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        <div className="mx-4 mt-2 flex flex-col gap-2">
+
           {siteConfig.navMenuItems.map(({ label, href }, i) => (
             <NavbarMenuItem key={label}>
               <Link
@@ -141,6 +182,7 @@ export const Navbar = () => {
                     ? "danger"
                     : "foreground"
                 }
+                onClick={() => setIsMenuOpen(false)}
               >
                 {label}
               </Link>

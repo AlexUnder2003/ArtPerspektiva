@@ -19,15 +19,14 @@ from paintings.utils import similar_to
 
 
 class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    GET список и детали картин + экшены для управления лайками и просмотра похожих.
-    Создавать/обновлять/удалять картины могут только админы (например, через админ-панель).
-    """
-
-    filter_backends = [filters.SearchFilter]
-    search_fields = ["title"]
-    queryset = Painting.objects.all().prefetch_related("tags")
     serializer_class = PaintingSerializer
+
+    def get_queryset(self):
+        qs = Painting.objects.all().prefetch_related("tags")
+        q = self.request.query_params.get("search", "").strip()
+        if q:
+            qs = qs.filter(title__icontains=q)
+        return qs
 
     @action(
         detail=True, methods=["post"], permission_classes=[IsAuthenticated]
@@ -88,10 +87,15 @@ class FavoriteListViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ArtistListViewSet(viewsets.ReadOnlyModelViewSet):
-    filter_backends = [filters.SearchFilter]
-    search_fields = ["name"]
+
     serializer_class = ArtistSerializer
-    queryset = Artist.objects.all().prefetch_related("paintings")
+
+    def get_queryset(self):
+        qs = Artist.objects.all()
+        q = self.request.query_params.get("search", "").strip()
+        if q:
+            qs = qs.filter(name__icontains=q.title())
+        return qs
 
 
 class TagsListView(generics.ListAPIView):
