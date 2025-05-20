@@ -25,7 +25,7 @@ export interface Artist {
   paintings: Painting[];
 }
 
-const BASE = "/api";
+const BASE = "http://localhost:8000/api";
 
 export const fetchPaintings = async (): Promise<Painting[]> => {
   const { data } = await axios.get<Painting[]>(`${BASE}/paintings/`);
@@ -37,6 +37,20 @@ export const fetchPaintingById = async (id: number): Promise<Painting> => {
   return data;
 };
 
+export const searchPaintings = async (query: string): Promise<Painting[]> => {
+  const { data } = await axios.get<Painting[]>(
+    `${BASE}/paintings/?search=${encodeURIComponent(query)}`
+  );
+  return data.filter(p => !p.archive);
+};
+
+/** Поиск авторов по имени */
+export const searchArtists = async (query: string): Promise<Artist[]> => {
+  const { data } = await axios.get<Artist[]>(
+    `${BASE}/artists/?search=${encodeURIComponent(query)}`
+  );
+  return data;
+};
 // НОВЫЙ метод — очень важно, чтобы был именно slash в конце!
 export const fetchSimilarPaintings = async (id: number): Promise<Painting[]> => {
   const url = `${BASE}/paintings/${id}/similar/`;

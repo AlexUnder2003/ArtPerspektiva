@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import (
     IsAuthenticated,
 )
+from rest_framework import filters
 
 
 from api.serializers import (
@@ -23,6 +24,8 @@ class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
     Создавать/обновлять/удалять картины могут только админы (например, через админ-панель).
     """
 
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["title"]
     queryset = Painting.objects.all().prefetch_related("tags")
     serializer_class = PaintingSerializer
 
@@ -85,6 +88,8 @@ class FavoriteListViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ArtistListViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
     serializer_class = ArtistSerializer
     queryset = Artist.objects.all().prefetch_related("paintings")
 
