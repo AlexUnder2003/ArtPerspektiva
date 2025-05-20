@@ -16,7 +16,7 @@ COPY . /app/
 # RUN python manage.py collectstatic --noinput
 
 # Expose port 8000 for the app
-EXPOSE 8000
+EXPOSE 8080
 
 # Start Gunicorn server
 CMD ["gunicorn", "artperspective.wsgi:application", "--bind", "0.0.0.0:8000"]
