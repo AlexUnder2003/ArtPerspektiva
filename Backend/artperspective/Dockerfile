@@ -19,4 +19,4 @@ COPY . /app/
 EXPOSE 8080
 
 # Start Gunicorn server
-CMD ["gunicorn", "artperspective.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "artperspective.wsgi:application", "--bind", "0.0.0.0:8080"]

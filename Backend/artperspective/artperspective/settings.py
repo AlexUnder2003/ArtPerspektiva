@@ -37,9 +37,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1",
 ]
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "80.242.56.74"]
 
 AUTH_USER_MODEL = "users.ArtPerspectiveUser"
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://80.242.56.74/",
+]
 
 # Application definition
 
