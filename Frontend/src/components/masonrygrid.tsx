@@ -1,7 +1,8 @@
-import { FC } from "react";
+import React from "react";
 import { Card } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Painting } from "@/services/api";
+import { Painting, addToFavorites } from "@/services/api";
+import { RequireAuthButton } from "./authmodal";
 
 interface MasonryGridProps {
   /** Обязательный массив картин для рендера */
@@ -12,7 +13,7 @@ interface MasonryGridProps {
   onItemClick?: (id: number) => void;
 }
 
-export const MasonryGrid: FC<MasonryGridProps> = ({
+export const MasonryGrid: React.FC<MasonryGridProps> = ({
   items,
   className = "",
   onItemClick,
@@ -20,6 +21,18 @@ export const MasonryGrid: FC<MasonryGridProps> = ({
   if (items.length === 0) {
     return <div className="text-center py-8">Нет работ для отображения</div>;
   }
+
+  // Обработчик добавления в избранное
+  const handleAddToFavorites = async (id: number) => {
+    try {
+      await addToFavorites(id);
+      // TODO: вывести уведомление об успехе или обновить UI
+      console.log(`Painting ${id} added to favorites`);
+    } catch (error: any) {
+      // TODO: обработать ошибку (например, уже добавлено)
+      console.error(error.response?.data || error.message);
+    }
+  };
 
   return (
     <section
@@ -66,17 +79,9 @@ export const MasonryGrid: FC<MasonryGridProps> = ({
                 {item.artist} · {item.year}
               </span>
             </div>
-            <button
-              type="button"
-              className="p-2 rounded-full hover:bg-gray-700/20 transition self-start"
-              aria-label="Add to favourites"
-              onClick={e => {
-                e.stopPropagation();
-                console.log("Favourite:", item.id);
-              }}
-            >
+            <RequireAuthButton onClick={() => handleAddToFavorites(item.id)}>
               <Icon icon="mdi:plus" width="27" />
-            </button>
+            </RequireAuthButton>
           </div>
         </div>
       ))}
