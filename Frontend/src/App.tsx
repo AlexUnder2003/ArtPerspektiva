@@ -7,6 +7,7 @@ import BlogPage from "@/pages/blog";
 import Login from "./pages/login";
 import ArtDetailPage from "@/pages/detail";
 import Signup from "./pages/signup";
+import ProfilePage from "./pages/profile";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
       <Route element={<BlogPage />}       path="/blog"   />
       <Route element={<Login />}          path="/login"  />
       <Route element={<Signup />}         path="/signup" />
-      {/* Обратите внимание на :id в конце */}
+      <Route element={<ProfilePage />}    path="/profile" />
       <Route element={<ArtDetailPage />}  path="/detail/:id"/>
     </Routes>
   );

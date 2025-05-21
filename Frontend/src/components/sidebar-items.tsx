@@ -16,22 +16,10 @@ export const items: SidebarItem[] = [
     title: "Home",
   },
   {
-    key: "projects",
-    href: "#",
-    icon: "solar:widget-2-outline",
-    title: "Projects",
-    endContent: (
-      <Icon className="text-default-400" icon="solar:add-circle-line-duotone" width={24} />
-    ),
-  },
-  {
-    key: "tasks",
-    href: "#",
-    icon: "solar:checklist-minimalistic-outline",
-    title: "Tasks",
-    endContent: (
-      <Icon className="text-default-400" icon="solar:add-circle-line-duotone" width={24} />
-    ),
+    key: "profile",
+    href: "/profile",
+    icon: "solar:face-scan-square-outline",
+    title: "Profile",
   },
   {
     key: "team",
