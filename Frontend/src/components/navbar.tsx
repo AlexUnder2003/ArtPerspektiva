@@ -126,7 +126,7 @@ export const Navbar = () => {
         </div>
 
         <NavbarMenuToggle className="md:hidden" />
-        <ThemeSwitch className="ml-4" />
+        <ThemeSwitch className="ml-3" />
       </NavbarContent>
 
       <NavbarMenu>

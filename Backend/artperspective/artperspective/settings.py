@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 
 load_dotenv()
 
@@ -33,8 +35,13 @@ DEBUG = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
     "http://localhost",
     "http://127.0.0.1",
+]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "authorization",
 ]
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "80.242.56.74"]

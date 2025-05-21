@@ -1,11 +1,11 @@
-import axios from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
 
 export interface Painting {
   id: number;
   title: string;
   artist: string;
   description: string;
-  artist_id: number;  
+  artist_id: number;
   year: number;
   image: string;
   tags: string[];
@@ -25,53 +25,119 @@ export interface Artist {
   paintings: Painting[];
 }
 
-const BASE = "/api";
+// Базовый URL вашего бэкенда
+const BASE_URL = "http://127.0.0.1:8000/api";
 
-export const fetchPaintings = async (): Promise<Painting[]> => {
-  const { data } = await axios.get<Painting[]>(`${BASE}/paintings/`);
-  return data.filter(p => !p.archive);
-};
+// Создаем один экземпляр axios
+const api: AxiosInstance = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-export const fetchPaintingById = async (id: number): Promise<Painting> => {
-  const { data } = await axios.get<Painting>(`${BASE}/paintings/${id}/`);
-  return data;
-};
+// Добавляем интерсептор для автоматического добавления токена
+api.interceptors.request.use(
+  (config: AxiosRequestConfig): AxiosRequestConfig => {
+    const token = localStorage.getItem("access_token");
+    if (token && config.headers) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error);
+  }
+);
 
-export const searchPaintings = async (query: string): Promise<Painting[]> => {
-  const { data } = await axios.get<Painting[]>(
-    `${BASE}/paintings/?search=${encodeURIComponent(query)}`
+// Интерсептор для автоматического обновления токена при 401
+api.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (refreshToken) {
+        try {
+          const { data } = await axios.post<{ access: string }>(
+            `${BASE_URL}/auth/jwt/refresh/`,
+            { refresh: refreshToken }
+          );
+          localStorage.setItem("access_token", data.access);
+          // Повторяем исходный запрос с новым токеном
+          if (error.config.headers) {
+            error.config.headers["Authorization"] = `Bearer ${data.access}`;
+          }
+          return api.request(error.config);
+        } catch (refreshError) {
+          // Если обновление не удалось, чистим токены
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          window.location.href = "/login";
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// === АУТЕНТИФИКАЦИЯ ===
+export const login = (username: string, password: string) =>
+  api.post<{ access: string; refresh: string }>(
+    "/auth/jwt/create/",
+    { username, password }
+  ).then(({ data }) => {
+    localStorage.setItem("access_token", data.access);
+    localStorage.setItem("refresh_token", data.refresh);
+    return data;
+  });
+
+export const signup = (
+  username: string,
+  email: string,
+  password: string,
+  re_password: string
+) =>
+  api.post(
+    "/auth/users/",
+    { username, email, password, re_password }
   );
-  return data.filter(p => !p.archive);
-};
 
-/** Поиск авторов по имени */
-export const searchArtists = async (query: string): Promise<Artist[]> => {
-  const { data } = await axios.get<Artist[]>(
-    `${BASE}/artists/?search=${encodeURIComponent(query)}`
+export const fetchMe = () =>
+  api.get("/auth/users/me/");
+
+// === КАРТИНЫ ===
+export const fetchPaintings = () =>
+  api.get<Painting[]>('/paintings/').then(({ data }) =>
+    data.filter((p) => !p.archive)
   );
-  return data;
-};
-// НОВЫЙ метод — очень важно, чтобы был именно slash в конце!
-export const fetchSimilarPaintings = async (id: number): Promise<Painting[]> => {
-  const url = `${BASE}/paintings/${id}/similar/`;
-  const { data } = await axios.get<Painting[]>(url);
-  return data.filter(p => !p.archive);
-};
 
-export const fetchArtists = async (): Promise<Artist[]> => {
-  const url = `${BASE}/artists/`;
-  const { data } = await axios.get<Artist[]>(url);
-  return data;
-  
-}
+export const fetchPaintingById = (id: number) =>
+  api.get<Painting>(`/paintings/${id}/`).then(({ data }) => data);
 
-export const fetchArtistById = async (id: number): Promise<Artist> => {
-  const url = `${BASE}/artists/${id}/`;
-  const { data } = await axios.get<Artist>(url);
-  return data;
-}
+export const searchPaintings = (query: string) =>
+  api
+    .get<Painting[]>(`/paintings/?search=${encodeURIComponent(query)}`)
+    .then(({ data }) => data.filter((p) => !p.archive));
 
-export const fetchTags = async (): Promise<Tag[]> => {
-  const { data } = await axios.get<Tag[]>(`${BASE}/tags/`);
-  return data;
-};
+export const fetchSimilarPaintings = (id: number) =>
+  api.get<Painting[]>(`/paintings/${id}/similar/`).then(({ data }) =>
+    data.filter((p) => !p.archive)
+  );
+
+// === АВТОРЫ ===
+export const fetchArtists = () =>
+  api.get<Artist[]>('/artists/').then(({ data }) => data);
+
+export const fetchArtistById = (id: number) =>
+  api.get<Artist>(`/artists/${id}/`).then(({ data }) => data);
+
+export const searchArtists = (query: string) =>
+  api
+    .get<Artist[]>(`/artists/?search=${encodeURIComponent(query)}`)
+    .then(({ data }) => data);
+
+// === ТЕГИ ===
+export const fetchTags = () =>
+  api.get<Tag[]>('/tags/').then(({ data }) => data);
+
+export default api;
