@@ -60,9 +60,6 @@ export default function ProfilePage() {
     // Обновляем user в контексте и закрываем модалку
     updateUser(updatedUser); // обновляет user глобально
     setEditOpen(false);
-    addToast({
-      title: "Профиль обновлен",
-    });
   }
 
   // Добавление/удаление из избранного — пример функции
@@ -91,7 +88,7 @@ export default function ProfilePage() {
         <p className="text-center mt-2">@{(user as UserProfile).username}</p>
         <p className="text-center mt-1">{(user as UserProfile).email}</p>
 
-        <div className="flex justify-center mt-4 space-x-4">
+        <div className="flex flex-col sm:flex-row justify-center mt-4 sm:space-x-4 space-y-4 sm:space-y-0">
           <Button
             variant="solid"
             onClick={() => setEditOpen(true)}
