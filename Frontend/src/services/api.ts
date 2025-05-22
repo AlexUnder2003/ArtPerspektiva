@@ -10,6 +10,7 @@ export interface Painting {
   image: string;
   tags: string[];
   archive: boolean;
+  is_favorite: boolean;
 }
 
 export interface Tag {

@@ -1,8 +1,14 @@
-import React from "react";
+// src/components/MasonryGrid.tsx
+import React, { useState, useEffect } from "react";
 import { Card, addToast } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Painting, addToFavorites } from "@/services/api";
+import {
+  Painting,
+  addToFavorites,
+  removeFromFavorites,
+} from "@/services/api";
 import { RequireAuthButton } from "./authmodal";
+
 
 interface MasonryGridProps {
   /** Обязательный массив картин для рендера */
@@ -19,24 +25,50 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
   onItemClick,
 }) => {
 
-  if (items.length === 0) {
+  // Локальное состояние для мгновенного обновления UI
+  const [localItems, setLocalItems] = useState<Painting[]>(items);
+
+  // Синхронизируем пропсы с локальным стейтом при их изменении
+  useEffect(() => {
+    setLocalItems(items);
+  }, [items]);
+
+  if (localItems.length === 0) {
     return <div className="text-center py-8">Нет работ для отображения</div>;
   }
 
-  // Обработчик добавления в избранное
-  const handleAddToFavorites = async (id: number) => {
+  // Переключить избранное и обновить локальные данные
+  const handleToggleFavorite = async (id: number, isFavorite: boolean) => {
     try {
-      await addToFavorites(id);
-      addToast({
-        title: "Добавлено в избранное",
-        description: `Картина с ID ${id} добавлена в избранное.`,
-        status: "success",
-        duration: 3000,
-      });
+      if (isFavorite) {
+        await removeFromFavorites(id);
+        addToast({
+          title: "Убрано из избранного",
+          description: `Картина удалена из избранного.`,
+          status: "info",
+          duration: 3000,
+        });
+      } else {
+        await addToFavorites(id);
+        addToast({
+          title: "Добавлено в избранное",
+          description: `Картина добавлена в избранное.`,
+          status: "success",
+          duration: 3000,
+        });
+      }
+
+      // Мгновенно обновляем локальный список
+      setLocalItems(prev =>
+        prev.map(p =>
+          p.id === id ? { ...p, is_favorite: !isFavorite } : p
+        )
+      );
     } catch (error: any) {
       addToast({
         title: "Ошибка",
-        description: error.response?.data?.detail || "Не удалось добавить в избранное.",
+        description:
+          error.response?.data?.detail || "Не удалось обновить избранное.",
         status: "error",
         duration: 3000,
       });
@@ -46,7 +78,7 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
   return (
     <section
       className={`w-full self-stretch columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 px-2 mx-auto max-w-none ${className}`}>
-      {items.map(item => (
+      {localItems.map(item => (
         <div key={item.id} className="break-inside-avoid w-full">
           <Card
             isHoverable
@@ -87,8 +119,18 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                 {item.artist} · {item.year}
               </span>
             </div>
-            <RequireAuthButton onClick={() => handleAddToFavorites(item.id)}>
-              <Icon icon="mdi:plus" width="27" />
+            <RequireAuthButton
+              tooltip={item.is_favorite ? "Убрать из избранного" : "Добавить в избранное"}
+              onClick={() =>
+                handleToggleFavorite(item.id, !!item.is_favorite)
+              }
+            >
+              <Icon
+                icon={
+                  item.is_favorite ? "mdi:close" : "mdi:plus"
+                }
+                width="27"
+              />
             </RequireAuthButton>
           </div>
         </div>

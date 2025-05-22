@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Avatar, Image, Button, addToast } from "@heroui/react";
+import { Avatar, Image, Button, useToast, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, addToast } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { Icon } from "@iconify/react";
 import { MasonryGrid } from "@/components/masonrygrid";
@@ -13,6 +13,7 @@ import {
   fetchSimilarPaintings,
   fetchArtistById,
   addToFavorites,
+  removeFromFavorites,
 } from "@/services/api";
 import { RequireAuthButton } from "@/components/authmodal";
 
@@ -22,7 +23,6 @@ const ArtDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-
   const [painting, setPainting] = useState<Painting | null>(null);
   const [related, setRelated] = useState<Painting[]>([]);
   const [artist, setArtist] = useState<Artist | null>(null);
@@ -30,7 +30,6 @@ const ArtDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (!paintingId) return;
-
     fetchPaintingById(paintingId)
       .then(data => {
         setPainting(data);
@@ -38,54 +37,53 @@ const ArtDetailPage: React.FC = () => {
       })
       .then(setArtist)
       .catch(console.error);
-
     fetchSimilarPaintings(paintingId)
       .then(setRelated)
       .catch(console.error);
   }, [paintingId]);
 
-  const handleArtistClick = () => {
-    if (artist) navigate(`/artist/${artist.id}`);
-  };
-
-  const handleOpen = () => {
-    document.body.style.overflow = "hidden";
-    setIsFullscreen(true);
-  };
-
-  const handleClose = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    document.body.style.overflow = "";
-    setIsFullscreen(false);
-  };
-
-  const handleContact = () => {
-    console.log("Связаться с продавцом для", painting?.id);
-  };
-
-  const handleFavorite = async () => {
-    if (!painting) return;
-    try {
-      await addToFavorites(painting.id);
-      addToast({
-        title: "Добавлено в избранное",
-        description: `Картина «${painting.title}» добавлена в избранное.`,
-        duration: 3000,
-      });
-    } catch (error: any) {
-      addToast({
-        title: "Ошибка",
-        description: error.response?.data?.detail || "Не удалось добавить в избранное.",
-      });
-    }
-  };
-
+  // Прокрутка по хэшу
   useEffect(() => {
     if (location.hash) {
       const el = document.getElementById(location.hash.slice(1));
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [location]);
+
+  // Открыть fullscreen
+  const handleOpen = () => {
+    document.body.style.overflow = "hidden";
+    setIsFullscreen(true);
+  };
+
+  // Закрыть fullscreen
+  const handleClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    document.body.style.overflow = "";
+    setIsFullscreen(false);
+  };
+
+  // Контакт с продавцом
+  const handleContact = () => {
+    console.log("Связаться с продавцом для", painting?.id);
+  };
+
+  // Добавить/удалить из избранного и обновить локальный state
+  const handleToggleFavorite = async () => {
+    if (!painting) return;
+    try {
+      if (painting.is_favorite) {
+        await removeFromFavorites(painting.id);
+        addToast({ title: "Убрано из избранного", description: `Картина удалена из избранного.`, status: "info", duration: 3000 });
+      } else {
+        await addToFavorites(painting.id);
+        addToast({ title: "Добавлено в избранное", description: `Картина добавлена в избранное.`, status: "success", duration: 3000 });
+      }
+      setPainting({ ...painting, is_favorite: !painting.is_favorite });
+    } catch (error: any) {
+      addToast({ title: "Ошибка", description: error.response?.data?.detail || "Не удалось обновить избранное.", status: "error", duration: 3000 });
+    }
+  };
 
   if (!painting) {
     return (
@@ -99,6 +97,7 @@ const ArtDetailPage: React.FC = () => {
     <DefaultLayout>
       <div className="w-full mx-auto px-4 py-4" id="top">
         <div className="flex flex-col lg:flex-row gap-8 pb-8">
+          {/* Изображение */}
           <div className="w-full lg:w-1/2 flex justify-center items-center overflow-hidden">
             <Image
               src={painting.image}
@@ -108,10 +107,11 @@ const ArtDetailPage: React.FC = () => {
             />
           </div>
 
+          {/* Инфо о картине и художнике */}
           <div className="w-full lg:w-1/2 flex flex-col">
             <div className="mb-4">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
-                <div className="flex items-center gap-4 cursor-pointer" onClick={handleArtistClick}>
+                <div className="flex items-center gap-4 cursor-pointer" onClick={() => artist && navigate(`/artist/${artist.id}`)}>
                   <Avatar src={artist?.image || ""} alt={artist?.name || ""} size="lg" />
                   <div>
                     <h2 className="text-2xl font-sans">{artist?.name}</h2>
@@ -127,10 +127,13 @@ const ArtDetailPage: React.FC = () => {
                   >
                     <span>Связаться с продавцом</span>
                   </Button>
-                  <RequireAuthButton onClick={handleFavorite}>
+                  <RequireAuthButton
+                    onClick={handleToggleFavorite}
+                    tooltip={painting.is_favorite ? "Убрать из избранного" : "Добавить в избранное"}
+                  >
                     <span className="min-w-[180px] flex items-center justify-center space-x-2">
-                      <Icon icon="mdi:plus" width="20" />
-                      <span>Добавить в избранное</span>
+                      <Icon icon={painting.is_favorite ? "mdi:close" : "mdi:plus"} width="20" />
+                      <span>{painting.is_favorite ? "Убрать из избранного" : "Добавить в избранное"}</span>
                     </span>
                   </RequireAuthButton>
                 </div>
@@ -150,6 +153,7 @@ const ArtDetailPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Похожие работы */}
         <div className="mt-12">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold font-sans">Похожие работы</h3>
@@ -158,6 +162,7 @@ const ArtDetailPage: React.FC = () => {
           <MasonryGrid items={related} onItemClick={pid => navigate(`/detail/${pid}#top`)} />
         </div>
 
+        {/* Fullscreen */}
         {isFullscreen && (
           <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={handleClose}>
             <button className="absolute top-4 right-4 p-2" onClick={handleClose}>

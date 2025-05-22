@@ -11,11 +11,20 @@ class PaintingSerializer(serializers.ModelSerializer):
     artist_id = serializers.PrimaryKeyRelatedField(
         source="artist", read_only=True
     )
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Painting
         fields = "__all__"
         read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_is_favorite(self, obj):
+        request = self.context.get("request")
+        if request is None or request.user.is_anonymous:
+            return False
+        return Favorite.objects.filter(
+            painting=obj, user=request.user
+        ).exists()
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
