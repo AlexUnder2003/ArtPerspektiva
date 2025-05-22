@@ -13,6 +13,15 @@ export interface Painting {
   is_favorite: boolean;
 }
 
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  last_name: string;
+  avatarUrl: string; // или avatar, как у вас названо в ответе бэка
+}
+
 export interface Tag {
   id: number;
   name: string;
@@ -155,5 +164,12 @@ export const searchArtists = (query: string) =>
 // === ТЕГИ ===
 export const fetchTags = () =>
   api.get<Tag[]>("/tags/").then(({ data }) => data);
+
+export const updateUserProfile = (data: FormData) =>
+  api
+    .patch<UserProfile>("/auth/users/me/", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    .then(({ data: user }) => user);
 
 export default api;
