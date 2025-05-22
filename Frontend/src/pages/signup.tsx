@@ -10,6 +10,7 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import ART_PERSPEKTIVA from "@/icons/ArtPerspektiva";
 
 export default function Signup() {
+  
   const [isVisible, setIsVisible] = React.useState(false);
   const [isConfirmVisible, setIsConfirmVisible] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -116,21 +117,7 @@ export default function Signup() {
               </button>
             }
           />
-          <Checkbox
-            isRequired
-            classNames={{ base: "py-4", label: "text-foreground/50", wrapper: "before:border-foreground/50" }}
-            size="sm"
-          >
-            Я принимаю&nbsp;
-            <Link color="foreground" href="#" size="sm">
-              Условия
-            </Link>
-            &nbsp; и&nbsp;
-            <Link color="foreground" href="#" size="sm">
-              Пользовательское соглашение
-            </Link>
-          </Checkbox>
-
+          
           {error && <p className="text-red-500 text-center">{error}</p>}
 
           <Button className={buttonClasses} type="submit">

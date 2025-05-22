@@ -84,13 +84,6 @@ export default function Login() {
             variant="bordered"
           />
           <div className="flex w-full items-center justify-between px-1 py-2">
-            <Checkbox
-              classNames={{ wrapper: "before:border-foreground/50" }}
-              name="remember"
-              size="sm"
-            >
-              Запомнить меня
-            </Checkbox>
             <RouterLink to="/forgot-password" className="text-foreground/50 text-sm">
               Забыли пароль?
             </RouterLink>

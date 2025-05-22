@@ -5,6 +5,7 @@ import { ScrollShadow } from "@heroui/react";
 import Sidebar      from "@/components/sidebar";
 import { items }    from "@/components/sidebar-items";
 import Navbar       from "@/components/navbar";
+import ART_PERSPEKTIVA from "@/icons/ArtPerspektiva";
 
 export default function DefaultLayout({
   children,
@@ -21,7 +22,7 @@ export default function DefaultLayout({
 
       <div className="flex flex-col flex-1 min-w-0">
         <header className="w-full flex items-center justify-center px-4 pt-4  bg-background">
-          <h1 className="text-2xl font-sans">ART PERSPEKTIVA</h1>
+          <ART_PERSPEKTIVA className="mx-auto h-8 size-60" />
         </header>
         <Navbar />
 
@@ -30,15 +31,8 @@ export default function DefaultLayout({
         </main>
 
         <footer className="w-full flex items-center justify-center py-3">
-          <Link
-            isExternal
-            className="flex items-center gap-1 text-current"
-            href="https://heroui.com"
-            title="heroui.com homepage"
-          >
-            <span className="text-default-600">Powered by</span>
-            <p className="text-primary">HeroUI</p>
-          </Link>
+            <span className="text-default-600">In development</span>
+
         </footer>
       </div>
     </div>
