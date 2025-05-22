@@ -38,7 +38,7 @@ export interface Artist {
 }
 
 // Базовый URL вашего бэкенда
-const BASE_URL = "http://127.0.0.1:8000/api";
+const BASE_URL = "/api";
 
 // Создаем один экземпляр axios
 const api: AxiosInstance = axios.create({
