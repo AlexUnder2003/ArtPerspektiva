@@ -13,13 +13,13 @@ export const items: SidebarItem[] = [
     key: "home",
     href: "/",
     icon: "solar:home-2-linear",
-    title: "Home",
+    title: "Главная",
   },
   {
     key: "profile",
     href: "/profile",
     icon: "solar:face-scan-square-outline",
-    title: "Profile",
+    title: "Профиль",
   },
   {
     key: "team",

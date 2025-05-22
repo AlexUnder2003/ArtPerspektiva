@@ -32,7 +32,6 @@ export function RequireAuthButton({ onClick, children }: RequireAuthButtonProps)
     }
     try {
       await onClick();
-      addToast({title: "Картинка добавлена в избранное", variant: "solid"});
     } catch { /* … */ }
   };
 

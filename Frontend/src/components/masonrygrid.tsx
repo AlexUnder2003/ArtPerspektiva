@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "@heroui/react";
+import { Card, addToast } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Painting, addToFavorites } from "@/services/api";
 import { RequireAuthButton } from "./authmodal";
@@ -18,6 +18,7 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
   className = "",
   onItemClick,
 }) => {
+
   if (items.length === 0) {
     return <div className="text-center py-8">Нет работ для отображения</div>;
   }
@@ -26,18 +27,25 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
   const handleAddToFavorites = async (id: number) => {
     try {
       await addToFavorites(id);
-      // TODO: вывести уведомление об успехе или обновить UI
-      console.log(`Painting ${id} added to favorites`);
+      addToast({
+        title: "Добавлено в избранное",
+        description: `Картина с ID ${id} добавлена в избранное.`,
+        status: "success",
+        duration: 3000,
+      });
     } catch (error: any) {
-      // TODO: обработать ошибку (например, уже добавлено)
-      console.error(error.response?.data || error.message);
+      addToast({
+        title: "Ошибка",
+        description: error.response?.data?.detail || "Не удалось добавить в избранное.",
+        status: "error",
+        duration: 3000,
+      });
     }
   };
 
   return (
     <section
-      className={`w-full self-stretch columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 px-2 mx-auto max-w-none ${className}`}
-    >
+      className={`w-full self-stretch columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 px-2 mx-auto max-w-none ${className}`}>
       {items.map(item => (
         <div key={item.id} className="break-inside-avoid w-full">
           <Card

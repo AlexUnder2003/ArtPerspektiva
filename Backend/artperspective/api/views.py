@@ -42,7 +42,7 @@ class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
         )
         if not created:
             return Response(
-                {"detail": "Painting is already liked."},
+                {"detail": "Картина уже в избранном."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = FavoriteSerializer(fav)
