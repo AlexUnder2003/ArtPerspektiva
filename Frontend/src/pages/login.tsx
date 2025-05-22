@@ -6,8 +6,8 @@ import type { InputProps } from "@heroui/react";
 import { Button, Input, Checkbox, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { ThemeSwitch } from "@/components/theme-switch";
-import ARTLOGO from "@/icons/Artlogo";
 import { AuthContext } from "@/contexts/AuthContext";
+import ART_PERSPEKTIVA from "@/icons/ArtPerspektiva";
 
 export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
@@ -46,16 +46,16 @@ export default function Login() {
       <div className="absolute top-10 right-10">
         <ThemeSwitch />
       </div>
-      <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
-        <ARTLOGO className="justify-center items-center mx-auto" />
-        <p className="pb-2 text-xl font-medium">Log In</p>
+      <div className="flex w-full max-w-sm flex-col gap-2 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
+        <ART_PERSPEKTIVA className="mx-auto h-10 mb-2 size-44" />
+        <p className="pb-2 text-xl font-medium">Войти</p>
         <Form className="flex flex-col gap-3" validationBehavior="native" onSubmit={handleSubmit}>
           <Input
             isRequired
             classNames={inputClasses}
-            label="Username"
+            label="Имя пользователя"
             name="username"
-            placeholder="Enter your username"
+            placeholder="Введите ваш логин"
             type="text"
             variant="bordered"
           />
@@ -77,9 +77,9 @@ export default function Login() {
                 )}
               </button>
             }
-            label="Password"
+            label="Пароль"
             name="password"
-            placeholder="Enter your password"
+            placeholder="Введите ваш пароль"
             type={isVisible ? "text" : "password"}
             variant="bordered"
           />
@@ -89,21 +89,21 @@ export default function Login() {
               name="remember"
               size="sm"
             >
-              Remember me
+              Запомнить меня
             </Checkbox>
             <RouterLink to="/forgot-password" className="text-foreground/50 text-sm">
-              Forgot password?
+              Забыли пароль?
             </RouterLink>
           </div>
           {error && <p className="text-red-500 text-center">{error}</p>}
           <Button className={buttonClasses} type="submit">
-            Log In
+            Войти
           </Button>
         </Form>
         <p className="text-center text-small text-foreground/50">
-          Need to create an account?&nbsp;
+          Нету аккаунта?&nbsp;
           <RouterLink to="/signup" className="text-foreground text-sm">
-            Sign Up
+            Зарегистрироваться
           </RouterLink>
         </p>
       </div>

@@ -8,7 +8,8 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Tooltip
+  Tooltip,
+  addToast
 } from "@heroui/react";
 
 interface RequireAuthButtonProps {
@@ -24,12 +25,15 @@ export function RequireAuthButton({ onClick, children }: RequireAuthButtonProps)
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!isAuthenticated) {
       setIsOpen(true);
-    } else {
-      onClick();
+      return;
     }
+    try {
+      await onClick();
+      addToast({title: "Картинка добавлена в избранное", variant: "solid"});
+    } catch { /* … */ }
   };
 
   return (

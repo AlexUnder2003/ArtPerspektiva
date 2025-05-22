@@ -7,7 +7,7 @@ import type { InputProps } from "@heroui/react";
 import { Button, Input, Checkbox, Form , Link} from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { ThemeSwitch } from "@/components/theme-switch";
-import ARTLOGO from "@/icons/Artlogo";
+import ART_PERSPEKTIVA from "@/icons/ArtPerspektiva";
 
 export default function Signup() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -61,33 +61,33 @@ export default function Signup() {
         <ThemeSwitch />
       </div>
       <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
-        <ARTLOGO className="justify-center items-center mx-auto" />
-        <p className="pb-2 text-xl font-medium">Sign Up</p>
+        <ART_PERSPEKTIVA className="mx-auto h-10 mb-2 size-44" />
+        <p className="pb-2 text-xl font-medium">Зарегистрироваться</p>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <Input
             isRequired
             classNames={inputClasses}
-            label="Username"
+            label="Имя пользователя"
             name="username"
-            placeholder="Enter your username"
+            placeholder="Придумайте логин"
             type="text"
             variant="bordered"
           />
           <Input
             isRequired
             classNames={inputClasses}
-            label="Email Address"
+            label="Email адрес"
             name="email"
-            placeholder="Enter your email"
+            placeholder="Введите свой email"
             type="email"
             variant="bordered"
           />
           <Input
             isRequired
             classNames={inputClasses}
-            label="Password"
+            label="Парорль"
             name="password"
-            placeholder="Enter your password"
+            placeholder="Придумайте пароль"
             type={isVisible ? "text" : "password"}
             variant="bordered"
             endContent={
@@ -102,9 +102,9 @@ export default function Signup() {
           <Input
             isRequired
             classNames={inputClasses}
-            label="Confirm Password"
+            label="Подтвердите пароль"
             name="confirmPassword"
-            placeholder="Confirm your password"
+            placeholder="Введите пароль еще раз"
             type={isConfirmVisible ? "text" : "password"}
             variant="bordered"
             endContent={
@@ -121,26 +121,26 @@ export default function Signup() {
             classNames={{ base: "py-4", label: "text-foreground/50", wrapper: "before:border-foreground/50" }}
             size="sm"
           >
-            I agree with the&nbsp;
+            Я принимаю&nbsp;
             <Link color="foreground" href="#" size="sm">
-              Terms
+              Условия
             </Link>
-            &nbsp; and&nbsp;
+            &nbsp; и&nbsp;
             <Link color="foreground" href="#" size="sm">
-              Privacy Policy
+              Пользовательское соглашение
             </Link>
           </Checkbox>
 
           {error && <p className="text-red-500 text-center">{error}</p>}
 
           <Button className={buttonClasses} type="submit">
-            Sign Up
+            Зарегистрироваться
           </Button>
         </form>
         <p className="text-center text-small text-foreground/50">
-          Already have an account?&nbsp;
+          Уже есть аккаунт?&nbsp;
           <RouterLink to="/login" className="text-foreground text-sm">
-            Log In
+            Войти
           </RouterLink>
         </p>
       </div>
