@@ -40,7 +40,7 @@ export interface Artist {
   paintings: Painting[];
 }
 
-const BASE_URL = "/api";
+const BASE_URL = "http://127.0.0.1:8000/api";
 
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
