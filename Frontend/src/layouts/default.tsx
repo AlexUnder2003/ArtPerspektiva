@@ -1,5 +1,3 @@
-// src/components/default-layout.tsx
-import { Link } from "@heroui/link";
 import { ScrollShadow } from "@heroui/react";
 
 import Sidebar      from "@/components/sidebar";
@@ -32,7 +30,6 @@ export default function DefaultLayout({
 
         <footer className="w-full flex items-center justify-center py-3">
             <span className="text-default-600">In development</span>
-
         </footer>
       </div>
     </div>

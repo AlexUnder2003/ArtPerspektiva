@@ -129,7 +129,7 @@ const ArtDetailPage: React.FC = () => {
                   </Button>
                   <RequireAuthButton
                     onClick={handleToggleFavorite}
-                    tooltip={painting.is_favorite ? "Убрать из избранного" : "Добавить в избранное"}
+                    tooltip={null}
                   >
                     <span className="min-w-[180px] flex items-center justify-center space-x-2">
                       <Icon icon={painting.is_favorite ? "mdi:close" : "mdi:plus"} width="20" />
