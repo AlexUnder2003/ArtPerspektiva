@@ -8,8 +8,6 @@ import DefaultLayout from "@/layouts/default";
 import {
   fetchFavorites,
   Painting,
-  addToFavorites,
-  removeFromFavorites,
 } from "@/services/api";
 import { MasonryGrid } from "@/components/masonrygrid";
 import { ProfileEditModal } from "@/components/profileeditmodal";
@@ -68,28 +66,7 @@ export default function ProfilePage() {
   }
 
   // Добавление/удаление из избранного — пример функции
-  async function toggleFavorite(painting: Painting) {
-    try {
-      if (painting.is_favorite) {
-        await removeFromFavorites(painting.id);
-        // Убираем из favorites локально
-        setFavorites((prev) => prev.filter((p) => p.id !== painting.id));
-      } else {
-        const updated = await addToFavorites(painting.id);
-        // Добавляем в favorites локально
-        setFavorites((prev) => [...prev, updated]);
-      }
-    } catch (error: any) {
-      addToast({
-        title: "Ошибка",
-        description:
-          error.response?.data?.detail ||
-          (painting.is_favorite
-            ? "Не удалось убрать из избранного."
-            : "Не удалось добавить в избранное."),
-      });
-    }
-  }
+  
 
   return (
     <DefaultLayout>
@@ -144,8 +121,7 @@ export default function ProfilePage() {
           <MasonryGrid
             items={favorites}
             onItemClick={(id) => navigate(`/detail/${id}`)}
-            // Предположим, что MasonryGrid может принимать коллбэк для добавления/удаления избранного
-            onToggleFavorite={toggleFavorite} // нужно реализовать внутри MasonryGrid и карточек
+  // нужно реализовать внутри MasonryGrid и карточек
           />
         )}
       </div>
