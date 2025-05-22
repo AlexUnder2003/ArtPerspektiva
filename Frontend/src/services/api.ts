@@ -159,10 +159,7 @@ export const fetchArtists = () =>
 export const fetchArtistById = (id: number) =>
   api.get<Artist>(`/artists/${id}/`).then(({ data }) => data);
 
-export const searchArtists = (query: string) =>
-  api
-    .get<Artist[]>(`/artists/?search=${encodeURIComponent(query)}`)
-    .then(({ data }) => data);
+
 
 // === Теги ===
 export const fetchTags = () =>

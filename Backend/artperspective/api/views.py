@@ -21,13 +21,10 @@ from paintings.utils import similar_to
 
 class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PaintingSerializer
-
-    def get_queryset(self):
-        qs = Painting.objects.all().prefetch_related("tags")
-        q = self.request.query_params.get("search", "").strip()
-        if q:
-            qs = qs.filter(title__icontains=q)
-        return qs
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["title", "artist__name"]
+    queryset = Painting.objects.all()
 
     @action(
         detail=True, methods=["post"], permission_classes=[IsAuthenticated]
@@ -88,15 +85,8 @@ class FavoriteListViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ArtistListViewSet(viewsets.ReadOnlyModelViewSet):
-
+    queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-
-    def get_queryset(self):
-        qs = Artist.objects.all()
-        q = self.request.query_params.get("search", "").strip()
-        if q:
-            qs = qs.filter(name__icontains=q.title())
-        return qs
 
 
 class TagsListView(generics.ListAPIView):

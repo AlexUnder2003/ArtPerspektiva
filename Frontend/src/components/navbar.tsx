@@ -1,12 +1,7 @@
 // components/Navbar.tsx
 import { useState, useEffect, useCallback } from "react";
 import debounce from "lodash.debounce";
-import {
-  searchPaintings,
-  searchArtists,
-  Painting,
-  Artist,
-} from "@/services/api";
+import { searchPaintings, Painting } from "@/services/api";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -23,7 +18,6 @@ import { siteConfig } from "@/config/site";
 export const Navbar = () => {
   const [query, setQuery] = useState("");
   const [paintings, setPaintings] = useState<Painting[]>([]);
-  const [artists, setArtists] = useState<Artist[]>([]);
   const [open, setOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -32,18 +26,14 @@ export const Navbar = () => {
     debounce(async (q: string) => {
       if (q.trim().length === 0) {
         setPaintings([]);
-        setArtists([]);
         return;
       }
       try {
-        const [pl, al] = await Promise.all([
-          searchPaintings(q),
-          searchArtists(q),
-        ]);
+        const pl = await searchPaintings(q);
         setPaintings(pl);
-        setArtists(al);
       } catch (err) {
         console.error("Search error:", err);
+        setPaintings([]);
       }
     }, 300),
     []
@@ -55,9 +45,7 @@ export const Navbar = () => {
   }, [query, fetchResults]);
 
   const handleSelect = () => {
-    // Закрыть выпадашку
     setOpen(false);
-    // Закрыть мобильное меню (если открыто)
     setIsMenuOpen(false);
   };
 
@@ -75,8 +63,8 @@ export const Navbar = () => {
           <Input
             type="search"
             value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Введите название картины или автора"
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Введите название картины"
             fullWidth
             className="w-full max-w-none font-sans"
             classNames={{
@@ -86,41 +74,24 @@ export const Navbar = () => {
             startContent={
               <SearchIcon className="text-default-400 pointer-events-none font-sans flex-shrink-0" />
             }
-            aria-label="Search paintings and authors"
+            aria-label="Search paintings"
           />
 
-          {open && (paintings.length > 0 || artists.length > 0) && (
+          {open && paintings.length > 0 && (
             <div className="absolute top-full mt-1 w-full bg-background shadow-lg rounded-lg z-10 max-h-80 overflow-auto">
-              {paintings.length > 0 && (
-                <div className="px-4 py-2">
-                  <h5 className="font-semibold text-sm mb-1">Paintings</h5>
-                  {paintings.map(p => (
-                    <Link
-                      key={p.id}
-                      href={`/detail/${p.id}`}
-                      className="block px-2 py-1 rounded hover:bg-default-100"
-                      onClick={handleSelect}
-                    >
-                      {p.title} — {p.artist}
-                    </Link>
-                  ))}
-                </div>
-              )}
-              {artists.length > 0 && (
-                <div className="px-4 py-2 border-t border-default-200">
-                  <h5 className="font-semibold text-sm mb-1">Artists</h5>
-                  {artists.map(a => (
-                    <Link
-                      key={a.id}
-                      href={`/artists/${a.id}`}
-                      className="block px-2 py-1 rounded hover:bg-default-100"
-                      onClick={handleSelect}
-                    >
-                      {a.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
+              <div className="px-4 py-2">
+                <h5 className="font-semibold text-sm mb-1">Paintings</h5>
+                {paintings.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/detail/${p.id}`}
+                    className="block px-2 py-1 rounded hover:bg-default-100"
+                    onClick={handleSelect}
+                  >
+                    {p.title} — {p.artist}
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -136,45 +107,28 @@ export const Navbar = () => {
             <Input
               type="search"
               value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Введите автора или название"
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Введите название картины"
               fullWidth
               className="w-full max-w-none font-sans"
               startContent={<SearchIcon className="text-default-400" />}
             />
 
-            {open && (paintings.length > 0 || artists.length > 0) && (
+            {open && paintings.length > 0 && (
               <div className="absolute top-full left-4 right-4 mt-1 bg-background shadow-lg rounded-lg z-10 max-h-60 overflow-auto">
-                {paintings.length > 0 && (
-                  <div className="px-4 py-2">
-                    <h5 className="font-semibold text-sm mb-1">Paintings</h5>
-                    {paintings.map(p => (
-                      <Link
-                        key={p.id}
-                        href={`/detail/${p.id}`}
-                        className="block px-2 py-1 rounded hover:bg-default-100"
-                        onClick={handleSelect}
-                      >
-                        {p.title} — {p.artist}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-                {artists.length > 0 && (
-                  <div className="px-4 py-2 border-t border-default-200">
-                    <h5 className="font-semibold text-sm mb-1">Artists</h5>
-                    {artists.map(a => (
-                      <Link
-                        key={a.id}
-                        href={`/artists/${a.id}`}
-                        className="block px-2 py-1 rounded hover:bg-default-100"
-                        onClick={handleSelect}
-                      >
-                        {a.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                <div className="px-4 py-2">
+                  <h5 className="font-semibold text-sm mb-1">Paintings</h5>
+                  {paintings.map((p) => (
+                    <Link
+                      key={p.id}
+                      href={`/detail/${p.id}`}
+                      className="block px-2 py-1 rounded hover:bg-default-100"
+                      onClick={handleSelect}
+                    >
+                      {p.title} — {p.artist}
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
           </div>
