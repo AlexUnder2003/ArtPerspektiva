@@ -1,5 +1,5 @@
 // src/components/ProfileEditModal.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Modal,
   ModalContent,
@@ -8,7 +8,6 @@ import {
   ModalFooter,
   Input,
   Button,
-  Avatar,
   addToast,
 } from "@heroui/react";  // ✔️ без ModalOverlay, FormControl, FormLabel
 import { Icon } from "@iconify/react";
@@ -27,36 +26,55 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
   user,
   onSave,
 }) => {
-  const [firstName, setFirstName] = useState(user.name);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [firstName, setFirstName] = useState(user.first_name);
   const [lastName, setLastName] = useState(user.last_name);
   const [email, setEmail] = useState(user.email);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [avatarBase64, setAvatarBase64] = useState<string | null>(null);
+
+  const handleOpenFileDialog = () => {
+    fileInputRef.current?.click();
+  };
 
   // Сбрасываем форму при повторном открытии
   useEffect(() => {
     if (isOpen) {
-      setFirstName(user.name);
+      setFirstName(user.first_name);
       setLastName(user.last_name);
       setEmail(user.email);
       setAvatarFile(null);
+      setAvatarBase64(null);
     }
   }, [isOpen, user]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) setAvatarFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      const cleaned = base64String.split(",")[1]; // убираем data:image/...
+      setAvatarBase64(cleaned);
+      setAvatarFile(file); // для отображения имени файла
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      const formData = new FormData();
-      formData.append("name", firstName);
-      formData.append("last_name", lastName);
-      formData.append("email", email);
-      if (avatarFile) formData.append("avatar", avatarFile);
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        ...(avatarBase64 && { avatar: avatarBase64 }),
+      };
 
-      const updated = await updateUserProfile(formData);
+      const updated = await updateUserProfile(payload);
       addToast({ title: "Профиль обновлён", status: "success", duration: 3000 });
       onSave(updated);
       onClose();
@@ -76,61 +94,57 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      backdrop="opaque"           // настраиваем фон модалки
-      placement="center"         // центрирование
-      isDismissable              // закрывается по Esc и клику вне
+      backdrop="opaque"
+      placement="center"
+      isDismissable
     >
       <ModalContent className="max-w-md">
         <ModalHeader>Редактировать профиль</ModalHeader>
 
         <ModalBody>
-            <Input
-              label="Имя"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              autoFocus
-            />
-            <Input
-              label="Фамилия"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-            <Input
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <div>
-              <div className="mb-2 font-medium">Аватар</div>
-              <div className="flex items-center space-x-4">
-                <Avatar src={user.avatarUrl} alt={user.name} />
-                <Button variant="outline" component="label">
-                  <Icon icon="mdi:upload" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={handleAvatarChange}
-                  />
-                </Button>
-                {avatarFile && <span>{avatarFile.name}</span>}
-              </div>
+          <Input
+            label="Имя"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            autoFocus
+          />
+          <Input
+            label="Фамилия"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <div>
+            <div className="mb-2 font-medium">Аватар</div>
+            <div className="flex items-center space-x-4">
+              <Button onClick={handleOpenFileDialog}>
+                <Icon icon="mdi:upload" className="mr-2" />
+                Загрузить файл
+              </Button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleAvatarChange}
+              />
+
+              {avatarFile && <span className="text-sm">{avatarFile.name}</span>}
             </div>
+          </div>
         </ModalBody>
 
         <ModalFooter className="flex justify-end space-x-2">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={submitting}
-          >
+          <Button variant="outline" onClick={onClose} disabled={submitting}>
             Отмена
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={submitting}
-          >
+          <Button onClick={handleSubmit} disabled={submitting}>
             {submitting ? "Сохранение..." : "Сохранить"}
           </Button>
         </ModalFooter>

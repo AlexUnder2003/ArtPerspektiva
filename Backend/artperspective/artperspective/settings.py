@@ -152,11 +152,19 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+DJOSER = {
+    "HIDE_USERS": False,
+    "SERIALIZERS": {
+        "user": "api.serializers.ArtUserSerializer",
+        "current_user": "api.serializers.ArtUserSerializer",
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

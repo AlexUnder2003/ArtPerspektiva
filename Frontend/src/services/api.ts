@@ -17,15 +17,17 @@ export interface UserProfile {
   id: number;
   username: string;
   email: string;
-  name: string;
+  first_name: string;
   last_name: string;
-  avatarUrl: string; // или avatar, как у вас названо в ответе бэка
+  avatar: string; // или avatar, как у вас названо в ответе бэка
 }
 
 export interface Tag {
   id: number;
   name: string;
 }
+
+
 
 export interface Artist {
   id: number;
@@ -165,11 +167,10 @@ export const searchArtists = (query: string) =>
 export const fetchTags = () =>
   api.get<Tag[]>("/tags/").then(({ data }) => data);
 
-export const updateUserProfile = (data: FormData) =>
+export const updateUserProfile = (data: Partial<UserProfile>) =>
   api
-    .patch<UserProfile>("/auth/users/me/", data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    })
+    .patch<UserProfile>("/auth/users/me/", data)
     .then(({ data: user }) => user);
+
 
 export default api;

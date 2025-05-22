@@ -77,13 +77,13 @@ export default function ProfilePage() {
 
       <div className="pt-8 px-4 max-w-screen-lg mx-auto">
         <Avatar
-          src={(user as UserProfile).avatarUrl}
+          src={(user as UserProfile).avatar}
           showFallback
-          name={(user as UserProfile).name}
+          name={(user as UserProfile).username}
           className="mx-auto mb-4 size-40"
         />
         <h1 className="text-2xl font-bold text-center">
-          {(user as UserProfile).name} {(user as UserProfile).last_name}
+          {(user as UserProfile).first_name} {(user as UserProfile).last_name}
         </h1>
         <p className="text-center mt-2">@{(user as UserProfile).username}</p>
         <p className="text-center mt-1">{(user as UserProfile).email}</p>

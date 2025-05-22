@@ -1,6 +1,24 @@
+from django.contrib.auth import get_user_model
+from djoser.serializers import UserSerializer
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
+
 from paintings.models import Artist, Painting, Favorite, Tags
+
+User = get_user_model()
+
+
+class ArtUserSerializer(UserSerializer):
+    avatar = Base64ImageField(required=False)
+
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = UserSerializer.Meta.fields + (
+            "avatar",
+            "first_name",
+            "last_name",
+        )
 
 
 class PaintingSerializer(serializers.ModelSerializer):

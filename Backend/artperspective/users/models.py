@@ -1,5 +1,6 @@
+from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
 class ArtPerspectiveUser(AbstractUser):
-    pass
+    avatar = models.ImageField(upload_to="avatars", blank=True, null=True)
