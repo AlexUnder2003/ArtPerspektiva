@@ -6,7 +6,7 @@ from paintings.models import Painting
 def similar_to(painting):
     tag_ids = painting.tags.values_list("id", flat=True)
     return (
-        Painting.objects.filter(tags__in=tag_ids)  # есть общий тег
+        Painting.objects.all()
         .exclude(pk=painting.pk)  # кроме самой картины
         .annotate(
             shared_tags=Count(

@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -101,3 +102,27 @@ class ArtistListViewSet(viewsets.ReadOnlyModelViewSet):
 class TagsListView(generics.ListAPIView):
     serializer_class = TagSerializer
     queryset = Tags.objects.all()
+
+
+class RecommendationViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = PaintingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        liked_paintings = Painting.objects.filter(favorite__user=user)
+
+        liked_tag_ids = Tags.objects.filter(
+            paintings__in=liked_paintings
+        ).values_list("id", flat=True)
+
+        queryset = (
+            Painting.objects.all()
+            .annotate(
+                shared_tags=Count("tags", filter=Q(tags__in=liked_tag_ids))
+            )
+            .order_by("-shared_tags", "title")
+        )
+
+        return queryset

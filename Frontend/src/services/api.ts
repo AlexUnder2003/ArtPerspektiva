@@ -122,6 +122,11 @@ export const fetchPaintings = () =>
     data.filter((p) => !p.archive)
   );
 
+export const fetchRecommended = () =>
+  api.get<Painting[]>("/recommendations/").then(({ data }) =>
+    data.filter((p) => !p.archive)
+  );
+
 export const fetchPaintingById = (id: number) =>
   api.get<Painting>(`/paintings/${id}/`).then(({ data }) => data);
 
