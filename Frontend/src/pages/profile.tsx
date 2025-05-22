@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/AuthContext";
 import { Avatar, Button, Spinner, addToast } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const [isEditOpen, setEditOpen] = useState(false);
   const [favorites, setFavorites] = useState<Painting[]>([]);
   const [favLoading, setFavLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Загрузка избранного
   useEffect(() => {
@@ -117,7 +118,7 @@ export default function ProfilePage() {
           ) : (
             <MasonryGrid
               items={favorites}
-              onItemClick={(id) => console.log("Clicked favorite painting", id)}
+              onItemClick={(id) => navigate(`/detail/${id}`)}
             />
           )}
         </div>
