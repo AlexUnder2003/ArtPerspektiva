@@ -1,7 +1,7 @@
 // src/components/RequireAuthButton.tsx
 "use client";
 
-import React, { ReactNode, useContext, useState } from "react";
+import  { ReactNode, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/AuthContext";
 import {
@@ -45,15 +45,14 @@ export function RequireAuthButton({
       await onClick();
     } catch (err) {
       console.error(err);
-      addToast({ title: "Ошибка", description: "Не удалось выполнить действие.", status: "error" });
     }
   };
 
   const buttonElement = (
     <Button
-      variant="outline"
       onClick={handleClick}
       aria-label={tooltip || undefined}
+      variant="light"
     >
       {children}
     </Button>
@@ -78,7 +77,7 @@ export function RequireAuthButton({
             Чтобы выполнить действие, нужно войти или зарегистрироваться.
           </ModalBody>
           <ModalFooter className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={() => navigate("/login")}>
+            <Button onClick={() => navigate("/login")}>
               Войти
             </Button>
             <Button onClick={() => navigate("/signup")}>

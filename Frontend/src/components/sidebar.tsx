@@ -102,7 +102,6 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
         return (
           <ListboxItem
             as={item.href ? NavLink : undefined}
-            to={item.href}
             {...item}
             key={item.key}
             classNames={{
@@ -163,7 +162,6 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
       (item: SidebarItem) => (
         <ListboxItem
           as={item.href ? NavLink : undefined}
-          to={item.href}
           {...item}
           key={item.key}
           startContent={!isCompact && (item.key === 'home' ? <ARTLOGO className={logoClass} aria-label="Logo" /> : item.icon ? <Icon icon={item.icon} width={24} className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} /> : null)}

@@ -4,7 +4,7 @@ import React from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { signup as apiSignup } from "@/services/api";
 import type { InputProps } from "@heroui/react";
-import { Button, Input, Checkbox, Form , Link} from "@heroui/react";
+import { Button, Input, } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { ThemeSwitch } from "@/components/theme-switch";
 import ART_PERSPEKTIVA from "@/icons/ArtPerspektiva";

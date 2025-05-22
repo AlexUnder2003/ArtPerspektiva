@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/AuthContext";
 import { Avatar, Button, Spinner, addToast } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
-import { fetchFavorites, Painting, fetchMe} from "@/services/api";
+import {
+  fetchFavorites,
+  Painting,
+  addToFavorites,
+  removeFromFavorites,
+} from "@/services/api";
 import { MasonryGrid } from "@/components/masonrygrid";
 import { ProfileEditModal } from "@/components/profileeditmodal";
 import type { UserProfile } from "@/services/api";
 
 export default function ProfilePage() {
-  const { user, loading, isAuthenticated, signout, reloadUser } = useContext(AuthContext);
+  const { user, loading, isAuthenticated, signout, updateUser } = useContext(AuthContext);
+  // updateUser — функция для обновления данных пользователя в контексте
+
   const [isEditOpen, setEditOpen] = useState(false);
   const [favorites, setFavorites] = useState<Painting[]>([]);
   const [favLoading, setFavLoading] = useState(true);
@@ -28,8 +35,6 @@ export default function ProfilePage() {
           addToast({
             title: "Ошибка",
             description: error.response?.data?.detail || "Не удалось загрузить избранное.",
-            status: "error",
-            duration: 3000,
           });
         } finally {
           setFavLoading(false);
@@ -52,19 +57,39 @@ export default function ProfilePage() {
     return <Navigate to="/login" replace />;
   }
 
-  // Обработчик сохранения из модалки
-  const handleSaveProfile = async (updated: UserProfile) => {
-    // Здесь мы предполагаем, что AuthContext имеет метод reloadUser,
-    // который заново делает fetchMe() и пушит в контекст.
-    if (reloadUser) {
-      await reloadUser();
-    } else {
-      // если reloadUser нет, можно вручную установить user в контексте
-      // или просто обновить локальный профиль:
-      // setLocalUser(updated);
+  // Обработчик сохранения из модалки профиля
+  async function handleProfileSave(updatedUser: UserProfile) {
+    // Обновляем user в контексте и закрываем модалку
+    updateUser(updatedUser); // обновляет user глобально
+    setEditOpen(false);
+    addToast({
+      title: "Профиль обновлен",
+    });
+  }
+
+  // Добавление/удаление из избранного — пример функции
+  async function toggleFavorite(painting: Painting) {
+    try {
+      if (painting.is_favorite) {
+        await removeFromFavorites(painting.id);
+        // Убираем из favorites локально
+        setFavorites((prev) => prev.filter((p) => p.id !== painting.id));
+      } else {
+        const updated = await addToFavorites(painting.id);
+        // Добавляем в favorites локально
+        setFavorites((prev) => [...prev, updated]);
+      }
+    } catch (error: any) {
+      addToast({
+        title: "Ошибка",
+        description:
+          error.response?.data?.detail ||
+          (painting.is_favorite
+            ? "Не удалось убрать из избранного."
+            : "Не удалось добавить в избранное."),
+      });
     }
-    addToast({ title: "Профиль обновлён", status: "success", duration: 3000 });
-  };
+  }
 
   return (
     <DefaultLayout>
@@ -73,7 +98,7 @@ export default function ProfilePage() {
         isOpen={isEditOpen}
         onClose={() => setEditOpen(false)}
         user={user as UserProfile}
-        onSave={handleSaveProfile}
+        onSave={handleProfileSave}
       />
 
       <div className="pt-8 px-4 max-w-screen-lg mx-auto">
@@ -106,22 +131,24 @@ export default function ProfilePage() {
           </Button>
         </div>
       </div>
-      
+
       <div className="mt-12">
-          <h2 className="text-xl font-medium mb-4 text-center">
-            Ваши любимые работы
-          </h2>
-          {favLoading ? (
-            <div className="flex justify-center py-8">
-              <Spinner size="lg" />
-            </div>
-          ) : (
-            <MasonryGrid
-              items={favorites}
-              onItemClick={(id) => navigate(`/detail/${id}`)}
-            />
-          )}
-        </div>
+        <h2 className="text-xl font-medium mb-4 text-center">
+          Ваши любимые работы
+        </h2>
+        {favLoading ? (
+          <div className="flex justify-center py-8">
+            <Spinner size="lg" />
+          </div>
+        ) : (
+          <MasonryGrid
+            items={favorites}
+            onItemClick={(id) => navigate(`/detail/${id}`)}
+            // Предположим, что MasonryGrid может принимать коллбэк для добавления/удаления избранного
+            onToggleFavorite={toggleFavorite} // нужно реализовать внутри MasonryGrid и карточек
+          />
+        )}
+      </div>
     </DefaultLayout>
   );
 }

@@ -45,16 +45,12 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
         addToast({
           title: "Убрано из избранного",
           description: `Картина удалена из избранного.`,
-          status: "info",
-          duration: 3000,
         });
       } else {
         await addToFavorites(id);
         addToast({
           title: "Добавлено в избранное",
           description: `Картина добавлена в избранное.`,
-          status: "success",
-          duration: 3000,
         });
       }
 
@@ -69,8 +65,6 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
         title: "Ошибка",
         description:
           error.response?.data?.detail || "Не удалось обновить избранное.",
-        status: "error",
-        duration: 3000,
       });
     }
   };

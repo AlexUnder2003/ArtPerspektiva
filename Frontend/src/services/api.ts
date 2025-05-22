@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  InternalAxiosRequestConfig,
+  AxiosHeaders,
+} from "axios";
 
 export interface Painting {
   id: number;
@@ -19,15 +24,13 @@ export interface UserProfile {
   email: string;
   first_name: string;
   last_name: string;
-  avatar: string; // или avatar, как у вас названо в ответе бэка
+  avatar: string;
 }
 
 export interface Tag {
   id: number;
   name: string;
 }
-
-
 
 export interface Artist {
   id: number;
@@ -37,32 +40,35 @@ export interface Artist {
   paintings: Painting[];
 }
 
-// Базовый URL вашего бэкенда
-const BASE_URL = "/api";
+const BASE_URL = "http://127.0.0.1:8000/api";
 
-// Создаем один экземпляр axios
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
-  headers: {
+  headers: new AxiosHeaders({
     "Content-Type": "application/json",
-  },
+  }),
 });
 
-// Интерсептор для добавления токена
+// ✅ Интерсептор запроса с безопасной установкой заголовка
 api.interceptors.request.use(
-  (config: AxiosRequestConfig): AxiosRequestConfig => {
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = localStorage.getItem("access_token");
-    if (token && config.headers) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+    if (token) {
+      if (!config.headers) {
+        config.headers = new AxiosHeaders();
+      }
+      if (typeof config.headers.set === "function") {
+        config.headers.set("Authorization", `Bearer ${token}`);
+      }
     }
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
 );
 
-// Авто-обновление токена при 401
+// ✅ Интерсептор ответа с автообновлением токена
 api.interceptors.response.use(
-  response => response,
+  (response) => response,
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
       const refreshToken = localStorage.getItem("refresh_token");
@@ -73,9 +79,11 @@ api.interceptors.response.use(
             { refresh: refreshToken }
           );
           localStorage.setItem("access_token", data.access);
-          if (error.config?.headers) {
-            error.config.headers["Authorization"] = `Bearer ${data.access}`;
+
+          if (error.config?.headers && typeof error.config.headers.set === "function") {
+            error.config.headers.set("Authorization", `Bearer ${data.access}`);
           }
+
           return api.request(error.config!);
         } catch {
           localStorage.removeItem("access_token");
@@ -88,12 +96,12 @@ api.interceptors.response.use(
   }
 );
 
-// === АУТЕНТИФИКАЦИЯ ===
+// === Аутентификация ===
 export const login = (username: string, password: string) =>
-  api.post<{ access: string; refresh: string }>(
-    "/auth/jwt/create/",
-    { username, password }
-  ).then(({ data }) => {
+  api.post<{ access: string; refresh: string }>("/auth/jwt/create/", {
+    username,
+    password,
+  }).then(({ data }) => {
     localStorage.setItem("access_token", data.access);
     localStorage.setItem("refresh_token", data.refresh);
     return data;
@@ -108,10 +116,10 @@ export const signup = (
 
 export const fetchMe = () => api.get("/auth/users/me/");
 
-// === КАРТИНЫ ===
+// === Картины ===
 export const fetchPaintings = () =>
   api.get<Painting[]>("/paintings/").then(({ data }) =>
-    data.filter(p => !p.archive)
+    data.filter((p) => !p.archive)
   );
 
 export const fetchPaintingById = (id: number) =>
@@ -120,38 +128,26 @@ export const fetchPaintingById = (id: number) =>
 export const searchPaintings = (query: string) =>
   api
     .get<Painting[]>(`/paintings/?search=${encodeURIComponent(query)}`)
-    .then(({ data }) => data.filter(p => !p.archive));
+    .then(({ data }) => data.filter((p) => !p.archive));
 
 export const fetchSimilarPaintings = (id: number) =>
-  api.get<Painting[]>(`/paintings/${id}/similar/`).then(({ data }) =>
-    data.filter(p => !p.archive)
-  );
+  api
+    .get<Painting[]>(`/paintings/${id}/similar/`)
+    .then(({ data }) => data.filter((p) => !p.archive));
 
 // === Избранное ===
-/**
- * Добавить картину в избранное
- * POST /paintings/{id}/favorite/
- */
 export const addToFavorites = (id: number) =>
   api.post<Painting>(`/paintings/${id}/favorite/`).then(({ data }) => data);
 
-/**
- * Убрать картину из избранного
- * DELETE /paintings/{id}/favorite/
- */
 export const removeFromFavorites = (id: number) =>
   api.delete<void>(`/paintings/${id}/favorite/`);
 
-/**
- * Получить список избранных картин пользователя
- * GET /favorites/
- */
 export const fetchFavorites = () =>
   api.get<Painting[]>("/favorites/").then(({ data }) =>
-    data.filter(p => !p.archive)
+    data.filter((p) => !p.archive)
   );
 
-// === АВТОРЫ ===
+// === Авторы ===
 export const fetchArtists = () =>
   api.get<Artist[]>("/artists/").then(({ data }) => data);
 
@@ -163,14 +159,11 @@ export const searchArtists = (query: string) =>
     .get<Artist[]>(`/artists/?search=${encodeURIComponent(query)}`)
     .then(({ data }) => data);
 
-// === ТЕГИ ===
+// === Теги ===
 export const fetchTags = () =>
   api.get<Tag[]>("/tags/").then(({ data }) => data);
 
 export const updateUserProfile = (data: Partial<UserProfile>) =>
-  api
-    .patch<UserProfile>("/auth/users/me/", data)
-    .then(({ data: user }) => user);
-
+  api.patch<UserProfile>("/auth/users/me/", data).then(({ data: user }) => user);
 
 export default api;

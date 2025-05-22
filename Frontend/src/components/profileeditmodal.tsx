@@ -75,15 +75,13 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
       };
 
       const updated = await updateUserProfile(payload);
-      addToast({ title: "Профиль обновлён", status: "success", duration: 3000 });
+      addToast({ title: "Профиль обновлён", });
       onSave(updated);
       onClose();
     } catch (error: any) {
       addToast({
         title: "Ошибка",
         description: error.response?.data?.detail || "Не удалось обновить профиль.",
-        status: "error",
-        duration: 3000,
       });
     } finally {
       setSubmitting(false);
@@ -141,7 +139,7 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
         </ModalBody>
 
         <ModalFooter className="flex justify-end space-x-2">
-          <Button variant="outline" onClick={onClose} disabled={submitting}>
+          <Button  onClick={onClose} disabled={submitting}>
             Отмена
           </Button>
           <Button onClick={handleSubmit} disabled={submitting}>

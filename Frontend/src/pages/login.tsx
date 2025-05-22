@@ -3,7 +3,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import type { InputProps } from "@heroui/react";
-import { Button, Input, Checkbox, Form } from "@heroui/react";
+import { Button, Input, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { AuthContext } from "@/contexts/AuthContext";

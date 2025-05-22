@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 import { login as apiLogin, fetchMe, signup as apiSignup } from "@/services/api";
 
@@ -11,6 +11,7 @@ export interface AuthContextType {
   signin: (username: string, password: string, remember: boolean) => Promise<void>;
   signout: () => void;
   signup: (username: string, email: string, password: string, rePassword: string) => Promise<void>;
+  updateUser: (updatedUser: any) => void; // добавили updateUser
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -19,13 +20,14 @@ export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   signin: async () => {},
   signout: () => {},
+  signup: async () => {},
+  updateUser: () => {}, // заглушка
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Устанавливаем JWT в axios
   const setToken = (token: string | null) => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -36,7 +38,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // При монтировании проверяем токен
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -54,55 +55,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     username: string,
     password: string,
     remember: boolean
-    ) => {
+  ) => {
     setLoading(true);
     try {
-        // apiLogin сразу возвращает { access, refresh }
-        const { access, refresh } = await apiLogin(username, password);
-
-        // кладём access в заголовки и в localStorage
-        setToken(access);
-
-        // опционально сохраняем refresh
-        if (remember) {
+      const { access, refresh } = await apiLogin(username, password);
+      setToken(access);
+      if (remember) {
         localStorage.setItem("refresh_token", refresh);
-        }
-
-        // подгружаем профиль
-        const me = await fetchMe();
-        setUser(me.data);
+      }
+      const me = await fetchMe();
+      setUser(me.data);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-    };
+  };
 
-    const signup = async (
+  const signup = async (
     username: string,
     email: string,
     password: string,
     rePassword: string
-    ) => {
+  ) => {
     setLoading(true);
     try {
-        await apiSignup(username, email, password, rePassword);
-        // после успеха можно автоматически логинить
-        // или просто возвращать управление в компонент 
+      await apiSignup(username, email, password, rePassword);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-    };
-
+  };
 
   const signout = () => {
     setToken(null);
     setUser(null);
   };
 
+  // Добавляем функцию для обновления данных пользователя в контексте
+  const updateUser = (updatedUser: any) => {
+    setUser(updatedUser);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, isAuthenticated: !!user, signin, signout, signup }}
+      value={{
+        user,
+        loading,
+        isAuthenticated: !!user,
+        signin,
+        signout,
+        signup,
+        updateUser, // прокидываем в контекст
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 }
+
+export default AuthProvider;
