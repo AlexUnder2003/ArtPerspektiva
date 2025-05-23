@@ -5,6 +5,7 @@ import { Card, Image } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { Artist, fetchArtistById } from "@/services/api";
 import { MasonryGrid } from "@/components/masonrygrid";
+import { Helmet } from "react-helmet-async";
 
 const AuthorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,9 +19,33 @@ const AuthorPage: React.FC = () => {
 
 
   if (!artist) return <div className="text-center py-8">Загрузка...</div>;
+  const canonicalUrl = `https://yourdomain.com/artist/${artist.id}`;
 
   return (
     <DefaultLayout>
+      <Helmet>
+        <title>{artist.name} — Художник | Галерея</title>
+        <meta name="description" content={artist.bio.slice(0, 160)} />
+
+        <meta property="og:title" content={artist.name} />
+        <meta property="og:description" content={artist.bio.slice(0, 160)} />
+        <meta property="og:image" content={artist.image} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:site_name" content="Галерея Картин" />
+
+        <link rel="canonical" href={canonicalUrl} />
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": artist.name,
+            "description": artist.bio,
+            "image": artist.image,
+          })}
+        </script>
+      </Helmet>
       {/* Обложка + Аватар */}
       <div
         className="relative w-full h-80 rounded-lg"

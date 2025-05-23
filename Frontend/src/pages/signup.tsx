@@ -7,6 +7,7 @@ import type { InputProps } from "@heroui/react";
 import { Button, Input, } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { Helmet } from "react-helmet-async";
 import ART_PERSPEKTIVA from "@/icons/ArtPerspektiva";
 
 export default function Signup() {
@@ -58,6 +59,10 @@ export default function Signup() {
 
   return (
     <div className="flex h-screen w-full items-center justify-center p-2 sm:p-4 lg:p-8">
+      <Helmet>
+        <title>Регистрация | Галерея Картин</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <div className="absolute top-10 right-10">
         <ThemeSwitch />
       </div>

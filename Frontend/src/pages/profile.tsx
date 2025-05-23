@@ -5,6 +5,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/AuthContext";
 import { Avatar, Button, Spinner, addToast } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
+import { Helmet } from "react-helmet-async";
 import {
   fetchFavorites,
   Painting,
@@ -67,6 +68,10 @@ export default function ProfilePage() {
 
   return (
     <DefaultLayout>
+      <Helmet>
+        <title>Личный кабинет | Галерея Картин</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       {/* Модалка должна быть на верхнем уровне JSX */}
       <ProfileEditModal
         isOpen={isEditOpen}
