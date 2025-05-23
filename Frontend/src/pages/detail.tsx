@@ -102,9 +102,8 @@ const ArtDetailPage: React.FC = () => {
   return (
       <DefaultLayout>
         <Helmet>
-          <title>{painting.title} — {artist?.name} | Галерея Картин</title>
+          <title>{painting.title} | Галерея Картин</title>
           <meta name="description" content={painting.description.slice(0, 160)} />
-
           <meta property="og:title" content={painting.title} />
           <meta property="og:description" content={painting.description.slice(0, 160)} />
           <meta property="og:image" content={painting.image} />
