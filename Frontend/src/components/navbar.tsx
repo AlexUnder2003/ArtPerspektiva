@@ -136,13 +136,7 @@ export const Navbar = () => {
               <Link
                 href={href ?? "#"}
                 size="lg"
-                color={
-                  i === 2
-                    ? "primary"
-                    : i === siteConfig.navMenuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
+                color="foreground"
                 onClick={() => {
                   setIsMenuOpen(false);
                   setOpen(false);

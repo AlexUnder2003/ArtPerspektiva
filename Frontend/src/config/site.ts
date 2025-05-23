@@ -32,7 +32,7 @@ export const siteConfig = {
     },
     {
       label: "Главная",
-      href: "/dashboard",
+      href: "/",
     },
   ],
   links: {
