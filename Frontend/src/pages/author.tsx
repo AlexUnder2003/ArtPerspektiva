@@ -44,6 +44,7 @@ const AuthorPage: React.FC = () => {
       <p className="text-center max-w-2xl mx-auto mt-2 font-sans">{artist.bio}</p>
 
       {/* Работы по годам */}
+      <h1 className="text-3xl font-bold text-center mt-24">Работы автора</h1>
       <div className="mt-12 space-y-12">
         {Object.entries(artist.paintings_by_year).map(([year, paintings]) => (
           <div key={year}>
