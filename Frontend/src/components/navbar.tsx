@@ -131,7 +131,7 @@ export const Navbar = () => {
             )}
           </div>
 
-          {siteConfig.navMenuItems.map(({ label, href }, i) => (
+          {siteConfig.navMenuItems.map(({ label, href }) => (
             <NavbarMenuItem key={label}>
               <Link
                 href={href ?? "#"}
