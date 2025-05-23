@@ -4,6 +4,7 @@ import Sidebar      from "@/components/sidebar";
 import { items }    from "@/components/sidebar-items";
 import Navbar       from "@/components/navbar";
 import ART_PERSPEKTIVA from "@/icons/ArtPerspektiva";
+import { Link } from "react-router-dom";
 
 export default function DefaultLayout({
   children,
@@ -20,7 +21,9 @@ export default function DefaultLayout({
 
       <div className="flex flex-col flex-1 min-w-0">
         <header className="w-full flex items-center justify-center px-4 pt-4  bg-background">
-          <ART_PERSPEKTIVA className="mx-auto h-8 size-60" />
+          <Link to="/">
+              <ART_PERSPEKTIVA className="mx-auto h-8 size-60" />
+          </Link>
         </header>
         <Navbar />
 

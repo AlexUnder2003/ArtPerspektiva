@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useContext } from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, Link as RouterLink, Link } from "react-router-dom";
 import type { InputProps } from "@heroui/react";
 import { Button, Input, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
@@ -42,12 +42,15 @@ export default function Login() {
   };
 
   return (
+
     <div className="flex h-screen w-full items-center justify-center p-2 sm:p-4 lg:p-8">
       <div className="absolute top-10 right-10">
         <ThemeSwitch />
       </div>
       <div className="flex w-full max-w-sm flex-col gap-2 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
-        <ART_PERSPEKTIVA className="mx-auto h-10 mb-2 size-44" />
+        <Link to="/">
+          <ART_PERSPEKTIVA className="mx-auto h-10 mb-2 size-44" />
+        </Link>
         <p className="pb-2 text-xl font-medium">Войти</p>
         <Form className="flex flex-col gap-3" validationBehavior="native" onSubmit={handleSubmit}>
           <Input

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, Link as RouterLink, Link } from "react-router-dom";
 import { signup as apiSignup } from "@/services/api";
 import type { InputProps } from "@heroui/react";
 import { Button, Input, } from "@heroui/react";
@@ -62,7 +62,9 @@ export default function Signup() {
         <ThemeSwitch />
       </div>
       <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
-        <ART_PERSPEKTIVA className="mx-auto h-10 mb-2 size-44" />
+        <Link to="/">
+          <ART_PERSPEKTIVA className="mx-auto h-10 mb-2 size-44" />
+        </Link>
         <p className="pb-2 text-xl font-medium">Зарегистрироваться</p>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <Input
