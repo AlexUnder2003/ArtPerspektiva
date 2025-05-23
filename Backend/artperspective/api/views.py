@@ -1,9 +1,10 @@
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Prefetch
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import (
     IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
 )
 from rest_framework import filters
 
@@ -21,7 +22,7 @@ from paintings.utils import similar_to
 
 class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PaintingSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ["title", "artist__name"]
     queryset = Painting.objects.all()
@@ -85,7 +86,9 @@ class FavoriteListViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ArtistListViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Artist.objects.all()
+    queryset = Artist.objects.prefetch_related(
+        Prefetch("paintings", queryset=Painting.objects.order_by("-year"))
+    )
     serializer_class = ArtistSerializer
 
 

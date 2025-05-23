@@ -18,6 +18,11 @@ class Artist(models.Model):
     name = models.CharField(max_length=255, verbose_name="Имя художника")
     bio = models.TextField(verbose_name="Биография")
     image = models.ImageField(upload_to="artists/", verbose_name="Изображение")
+    background = models.ImageField(
+        upload_to="artists/backgrounds/",
+        verbose_name="Фоновое изображение",
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Художник"

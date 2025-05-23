@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -62,11 +64,18 @@ class SimilarPaintingSerializer(PaintingSerializer):
 
 
 class ArtistSerializer(serializers.ModelSerializer):
-    paintings = PaintingSerializer(many=True, read_only=True)
+    paintings_by_year = serializers.SerializerMethodField()
 
     class Meta:
         model = Artist
         fields = "__all__"
+
+    def get_paintings_by_year(self, obj):
+        paintings_set = obj.paintings.all().order_by("-year")
+        grouped = defaultdict(list)
+        for painting in paintings_set:
+            grouped[painting.year].append(PaintingSerializer(painting).data)
+        return grouped
 
 
 class TagSerializer(serializers.ModelSerializer):

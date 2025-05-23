@@ -8,6 +8,7 @@ import Login from "./pages/login";
 import ArtDetailPage from "@/pages/detail";
 import Signup from "./pages/signup";
 import ProfilePage from "./pages/profile";
+import AuthorPage from "./pages/author";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route element={<Signup />}         path="/signup" />
         <Route element={<ProfilePage />}    path="/profile" />
         <Route element={<ArtDetailPage />}  path="/detail/:id"/>
+        <Route element={<AuthorPage />}     path="/artist/:id" />
       </Routes>
   );
 }

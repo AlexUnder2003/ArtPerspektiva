@@ -37,10 +37,14 @@ export interface Artist {
   name: string;
   bio: string;
   image: string;
-  paintings: Painting[];
+  background: string;
+  paintings_by_year: {
+    [year: string]: Painting[];
+  };
 }
 
-const BASE_URL = "http://127.0.0.1:8000/api";
+
+const BASE_URL = "/api";
 
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
