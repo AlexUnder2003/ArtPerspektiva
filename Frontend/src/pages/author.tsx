@@ -48,7 +48,7 @@ const AuthorPage: React.FC = () => {
       <div className="mt-12 space-y-12">
         {Object.entries(artist.paintings_by_year).map(([year, paintings]) => (
           <div key={year}>
-            <h2 className="text-2xl font-semibold mb-4">{year}</h2>
+            <h2 className="text-2xl font-semibold mb-4">{year} год</h2>
             <MasonryGrid items={paintings} />
           </div>
         ))}

@@ -80,7 +80,6 @@ export const Navbar = () => {
           {open && paintings.length > 0 && (
             <div className="absolute top-full mt-1 w-full bg-background shadow-lg rounded-lg z-10 max-h-80 overflow-auto">
               <div className="px-4 py-2">
-                <h5 className="font-semibold text-sm mb-1">Paintings</h5>
                 {paintings.map((p) => (
                   <Link
                     key={p.id}
@@ -117,7 +116,6 @@ export const Navbar = () => {
             {open && paintings.length > 0 && (
               <div className="absolute top-full left-4 right-4 mt-1 bg-background shadow-lg rounded-lg z-10 max-h-60 overflow-auto">
                 <div className="px-4 py-2">
-                  <h5 className="font-semibold text-sm mb-1">Paintings</h5>
                   {paintings.map((p) => (
                     <Link
                       key={p.id}
