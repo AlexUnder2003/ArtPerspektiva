@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
 import { Card, Image } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { Artist, fetchArtistById } from "@/services/api";
@@ -8,6 +9,7 @@ import { MasonryGrid } from "@/components/masonrygrid";
 const AuthorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [artist, setArtist] = useState<Artist | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) return;
@@ -49,7 +51,8 @@ const AuthorPage: React.FC = () => {
         {Object.entries(artist.paintings_by_year).map(([year, paintings]) => (
           <div key={year}>
             <h2 className="text-2xl font-semibold mb-4">{year} год</h2>
-            <MasonryGrid items={paintings} />
+            <MasonryGrid items={paintings}
+            onItemClick={(id) => navigate(`/detail/${id}`)} />
           </div>
         ))}
       </div>
