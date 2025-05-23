@@ -45,7 +45,7 @@ export default function Login() {
   return (
     <div className="flex h-screen w-full items-center justify-center p-2 sm:p-4 lg:p-8">
       <Helmet>
-        <title>Вход в аккаунт | Галерея Картин</title>
+        <title>Вход в аккаунт | ArtPerspektiva</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div className="absolute top-10 right-10">

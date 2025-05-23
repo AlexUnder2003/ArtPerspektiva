@@ -24,7 +24,7 @@ const AuthorPage: React.FC = () => {
   return (
     <DefaultLayout>
       <Helmet>
-        <title>{artist.name} — Художник | Галерея</title>
+        <title>{artist.name} | ArtPerspektiva</title>
         <meta name="description" content={artist.bio.slice(0, 160)} />
 
         <meta property="og:title" content={artist.name} />

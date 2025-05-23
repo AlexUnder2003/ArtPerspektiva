@@ -69,7 +69,7 @@ export default function ProfilePage() {
   return (
     <DefaultLayout>
       <Helmet>
-        <title>Личный кабинет | Галерея Картин</title>
+        <title>Личный кабинет | ArtPerspektiva</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       {/* Модалка должна быть на верхнем уровне JSX */}

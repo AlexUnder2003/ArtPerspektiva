@@ -32,7 +32,7 @@ const IndexPage = () => {
   return (
     <DefaultLayout>
       <Helmet>
-        <title>Галерея Картин — Главная</title>
+        <title>ArtPerspektiva — Главная</title>
         <meta name="description" content="Откройте для себя уникальные произведения искусства и живописи. Листайте галерею, добавляйте в избранное, изучайте авторов." />
         <meta property="og:title" content="Галерея Картин — Главная" />
         <meta property="og:description" content="Откройте для себя уникальные произведения искусства и живописи. Листайте галерею, добавляйте в избранное, изучайте авторов." />
