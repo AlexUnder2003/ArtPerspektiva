@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "corsheaders",
     "rest_framework",
+    "django_filters",
     "djoser",
     "api.apps.ApiConfig",
     "paintings.apps.PaintingsConfig",

@@ -1,29 +1,36 @@
-from django.db.models import Count, Q, Prefetch
-from rest_framework import viewsets, status, generics
+from api.serializers import (
+    ArtistSerializer,
+    FavoriteSerializer,
+    PaintingSerializer,
+    SimilarPaintingSerializer,
+    TagSerializer,
+)
+from django.db.models import Count, Prefetch, Q
+from django_filters.rest_framework import DjangoFilterBackend
+from paintings.models import Artist, Favorite, Painting, Tags
+from paintings.utils import similar_to
+from rest_framework import filters, generics, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
 )
-from rest_framework import filters
-
-
-from api.serializers import (
-    ArtistSerializer,
-    PaintingSerializer,
-    SimilarPaintingSerializer,
-    FavoriteSerializer,
-    TagSerializer,
-)
-from paintings.models import Artist, Favorite, Painting, Tags
-from paintings.utils import similar_to
+from rest_framework.response import Response
 
 
 class PaintingViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Painting.objects.filter(archive=False)
     serializer_class = PaintingSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [filters.SearchFilter]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+    ]
+    filterset_fields = {
+        "tags": ["exact"],
+    }
+
     search_fields = ["title", "artist__name"]
     queryset = Painting.objects.all()
 
@@ -100,6 +107,12 @@ class TagsListView(generics.ListAPIView):
 class RecommendationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PaintingSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    filterset_fields = {
+        "tags": ["exact"],
+    }
 
     def get_queryset(self):
         user = self.request.user
