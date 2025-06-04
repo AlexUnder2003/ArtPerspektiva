@@ -24,19 +24,23 @@ const IndexPage = () => {
    * Загружаем картины:
    *  – авторизованному пользователю — персональные рекомендации,
    *  – гостю — общий каталог.
-   *  Фильтр по тегу добавляется через selectedTagId.
+   * Фильтр по тегу добавляется через selectedTagId.
    */
   useEffect(() => {
     if (loading) return;
 
+    // выбираем функцию-«загрузчик» в зависимости от авторизации
     const loader = isAuthenticated ? fetchRecommended : fetchPaintings;
 
-    loader(selectedTagId)
+    // если selectedTagId === null, передаем undefined
+    const tagForApi = selectedTagId ?? undefined;
+
+    loader(tagForApi)
       .then(setPaintings)
       .catch((err) => {
         console.error("Ошибка при загрузке картин", err);
-        // если рекомендации упали — открываем общий список
-        return fetchPaintings(selectedTagId).then(setPaintings);
+        // если рекомендации упали — загружаем общий список
+        return fetchPaintings(tagForApi).then(setPaintings);
       });
   }, [isAuthenticated, loading, selectedTagId]);
 
@@ -60,13 +64,13 @@ const IndexPage = () => {
         <link rel="canonical" href="https://yourdomain.com/" />
       </Helmet>
 
-      {/* Табы-категории: передаём id и колбэк выбора */}
+      {/* Табы-категории: у них props.selectedTagId = number | null, onSelect принимает number | null */}
       <TabsCategories
         selectedTagId={selectedTagId}
         onSelect={setSelectedTagId}
       />
 
-      {/* Сама «каменная» сетка работ */}
+      {/* Сам «каменная» сетка работ */}
       <div className="px-4 py-6">
         <MasonryGrid
           items={paintings}
